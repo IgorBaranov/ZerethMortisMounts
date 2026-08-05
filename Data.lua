@@ -42,6 +42,39 @@ ns.reagents = {
 	[189180] = { label = "Wind's Infinite Call", how = "Drops from Enhanced Avian on the Sepulcher island in eastern Zereth Mortis. Low chance from Olea Cache.", x = 77.0, y = 57.0 },
 }
 
+-- The unlock chain for MOUNT crafting.
+-- Research at the Cypher Research Console cannot be read reliably from the API,
+-- so the research step is inferred: it is certainly done once any quest of the
+-- chain has been picked up. Quest steps use IsQuestFlaggedCompleted/IsOnQuest.
+ns.UNLOCK_SPELL = 366367 -- Protoform Synthesis (Mount) -- known == craft unlocked
+
+ns.unlockChain = {
+	{ type = "research", title = "Cypher Research: Sopranian Understanding",
+	  note = "At the Cypher Research Console in Exile's Hollow. Needs the earlier tiers (Metrial, Aealic, Dealic) first; Sopranian Understanding itself costs 220 Cyphers and researches for ~5 days 18 hours. When it finishes, Elder Amir offers the next quest." },
+	{ type = "quest", id = 64829, title = "Finding Tahli",
+	  note = "From Elder Amir. Find Tahli near the Arrangement Index." },
+	{ type = "quest", id = 64745, title = "Selfless Preservation",
+	  note = "Follow the trail inside the Arrangement Index." },
+	{ type = "quest", id = 64759, title = "Junk's Not Dead",
+	  note = "Obtain glyphs from 6 Depleted Servitors around the Arrangement Index. Runs together with Core Competency." },
+	{ type = "quest", id = 64761, title = "Core Competency",
+	  note = "Charge a Depleted Automa Core by draining slain wild creatures." },
+	{ type = "quest", id = 64762, title = "Revival of the Fittest",
+	  note = "Revive the Hidden Servitor with the charged core." },
+	{ type = "quest", id = 64763, title = "Maintenance Mode",
+	  note = "Runs together with Access Request." },
+	{ type = "quest", id = 64766, title = "Access Request",
+	  note = "Runs together with Maintenance Mode." },
+	{ type = "quest", id = 64767, title = "The Final Song",
+	  note = "Concludes the Tahli storyline." },
+	{ type = "quest", id = 65420, title = "Judgment Call",
+	  note = "Speak to Elder Amir in Pilgrim's Grace." },
+	{ type = "quest", id = 65426, title = "The Lost Component",
+	  note = "Recover the missing forge component." },
+	{ type = "quest", id = 65427, title = "A New Architect",
+	  note = "Final step. Rewards the mount forge, 450 Genesis Motes, a Cervid Lattice, Tools of Incomprehensible Experimentation and Schematic: Deathrunner." },
+}
+
 -- All 24 Protoform Synthesis mounts.
 -- motes / lattice / rare = the exact recipe. schematic = how you unlock the recipe.
 ns.mounts = {

@@ -195,6 +195,32 @@ function ns.BuildUI()
 	f.summary:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 1, -6)
 	f.summary:SetJustifyH("LEFT")
 
+	-- tabs
+	f.tabButtons = {}
+	local tabSpecs = {
+		{ key = "mounts", text = "Mounts" },
+		{ key = "unlock", text = "Unlock chain" },
+	}
+	local prevTab
+	for i = #tabSpecs, 1, -1 do -- lay out right-to-left so the row hugs the corner
+		local spec = tabSpecs[i]
+		local b = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
+		b:SetSize(110, 22)
+		b:SetText(spec.text)
+		if prevTab then
+			b:SetPoint("RIGHT", prevTab, "LEFT", -4, 0)
+		else
+			b:SetPoint("TOPRIGHT", f, "TOPRIGHT", -34, -14)
+		end
+		b:SetScript("OnClick", function()
+			ZerethMortisMountsDB.tab = spec.key
+			ns.Refresh()
+		end)
+		b.key = spec.key
+		table.insert(f.tabButtons, b)
+		prevTab = b
+	end
+
 	-- filters
 	local filters = {
 		{ key = "all", text = "All" },
@@ -224,6 +250,7 @@ function ns.BuildUI()
 
 	-- list
 	local listBox = MakeBackdropFrame(f)
+	f.listBox = listBox
 	listBox:SetPoint("TOPLEFT", 12, -102)
 	listBox:SetSize(LIST_WIDTH, HEIGHT - 118)
 	listBox:SetBackdropColor(0, 0, 0, 0.35)
@@ -249,6 +276,7 @@ function ns.BuildUI()
 
 	-- detail
 	local detailBox = MakeBackdropFrame(f)
+	f.detailBox = detailBox
 	detailBox:SetPoint("TOPLEFT", listBox, "TOPRIGHT", 10, 0)
 	detailBox:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -12, 16)
 	detailBox:SetBackdropColor(0, 0, 0, 0.35)
@@ -318,7 +346,120 @@ function ns.BuildUI()
 	d.empty:SetWidth(dWidth)
 	d.empty:SetText("Pick a mount on the left.")
 
+	ns.BuildUnlockPanel(f)
 	ns.RegisterRefresh(ns.UpdateWindow)
+end
+
+--------------------------------------------------------------------------------
+-- unlock-chain tab
+--------------------------------------------------------------------------------
+
+local STATE_STYLE = {
+	done   = { icon = ICON_READY,                                  color = { 0.55, 0.8, 0.55 } },
+	active = { icon = "Interface\\RaidFrame\\ReadyCheck-Waiting",  color = { 1, 0.85, 0.3 } },
+	next   = { atlas = "QuestNormal", color = { 1, 1, 1 } },
+	locked = { icon = nil,                                          color = { 0.45, 0.45, 0.5 } },
+}
+
+local STATE_TEXT = {
+	done = "|cff55ee66done|r",
+	active = "|cffffd100in progress -- you are here|r",
+	next = "|cffffffffnext step|r",
+	locked = "|cff777777locked|r",
+}
+
+function ns.BuildUnlockPanel(f)
+	local box = MakeBackdropFrame(f)
+	box:SetPoint("TOPLEFT", 12, -102)
+	box:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -12, 16)
+	box:SetBackdropColor(0, 0, 0, 0.35)
+	box:Hide()
+	f.unlockBox = box
+
+	local scroll = CreateFrame("ScrollFrame", "ZerethMortisMountsUnlock", box, "UIPanelScrollFrameTemplate")
+	scroll:SetPoint("TOPLEFT", 10, -10)
+	scroll:SetPoint("BOTTOMRIGHT", -28, 10)
+
+	local child = CreateFrame("Frame", nil, scroll)
+	local cWidth = WIDTH - 66
+	child:SetSize(cWidth, 10)
+	scroll:SetScrollChild(child)
+	box.child = child
+
+	box.header = child:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	box.header:SetPoint("TOPLEFT", 4, -2)
+	box.header:SetWidth(cWidth - 8)
+	box.header:SetJustifyH("LEFT")
+
+	box.steps = {}
+	for i, step in ipairs(ns.unlockChain) do
+		local row = CreateFrame("Frame", nil, child)
+		row:SetWidth(cWidth)
+
+		row.icon = row:CreateTexture(nil, "ARTWORK")
+		row.icon:SetSize(18, 18)
+		row.icon:SetPoint("TOPLEFT", 4, -2)
+
+		row.num = row:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+		row.num:SetPoint("TOPLEFT", row.icon, "TOPRIGHT", 8, -2)
+		row.num:SetText(step.type == "research" and "" or tostring(i - 1) .. ".")
+
+		row.title = row:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+		row.title:SetPoint("TOPLEFT", row.icon, "TOPRIGHT", 30, -1)
+		row.title:SetJustifyH("LEFT")
+		row.title:SetText(step.title)
+
+		row.state = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+		row.state:SetPoint("TOPRIGHT", row, "TOPRIGHT", -8, -3)
+
+		row.note = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+		row.note:SetPoint("TOPLEFT", row.title, "BOTTOMLEFT", 0, -3)
+		row.note:SetWidth(cWidth - 80)
+		row.note:SetJustifyH("LEFT")
+		row.note:SetTextColor(0.68, 0.68, 0.74)
+		row.note:SetText(step.note)
+
+		box.steps[i] = row
+	end
+end
+
+function ns.UpdateUnlockPanel()
+	local f = ns.window
+	local box = f.unlockBox
+	local states, unlocked = ns.UnlockStates()
+
+	if unlocked then
+		box.header:SetText("|cff55ee66Mount crafting is UNLOCKED on this character.|r The Protoform Repository (68.5, 30.1) is open and every schematic below can drop for you.")
+	else
+		box.header:SetText("|cffff6666Mount crafting is NOT unlocked yet on this character.|r Work through the chain below. Everything starts at the Cypher Research Console in Exile's Hollow; quest progress is read live from your quest log.")
+	end
+
+	local anchor = box.header
+	local total = box.header:GetStringHeight() + 16
+	for i, row in ipairs(box.steps) do
+		local state = states[i]
+		local style = STATE_STYLE[state]
+
+		if style.atlas and row.icon.SetAtlas then
+			row.icon:SetAtlas(style.atlas)
+			row.icon:Show()
+		elseif style.icon then
+			row.icon:SetTexture(style.icon)
+			row.icon:Show()
+		else
+			row.icon:Hide()
+		end
+		row.title:SetTextColor(unpack(style.color))
+		row.state:SetText(STATE_TEXT[state])
+
+		row:ClearAllPoints()
+		row:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT", 0, i == 1 and -14 or -10)
+		local h = 18 + row.note:GetStringHeight() + 8
+		row:SetHeight(h)
+		total = total + h + 10
+		anchor = row
+	end
+	box.child:SetHeight(total + 10)
 end
 
 --------------------------------------------------------------------------------
@@ -399,6 +540,23 @@ end
 function ns.UpdateWindow()
 	local f = ns.window
 	if not f then return end
+
+	-- tab switching
+	local tab = ZerethMortisMountsDB.tab or "mounts"
+	for _, b in ipairs(f.tabButtons) do
+		if b.key == tab then b:LockHighlight() else b:UnlockHighlight() end
+	end
+	local mountsTab = (tab == "mounts")
+	f.listBox:SetShown(mountsTab)
+	f.detailBox:SetShown(mountsTab)
+	for _, b in ipairs(f.filterButtons) do b:SetShown(mountsTab) end
+	f.unlockBox:SetShown(not mountsTab)
+	if not mountsTab then
+		local collected, total = ns.Summary()
+		f.summary:SetText(("Learned |cffffd100%d|r of |cffffd100%d|r"):format(collected, total))
+		ns.UpdateUnlockPanel()
+		return
+	end
 
 	local collected, total, ready, motesNeeded = ns.Summary()
 	local motes = ns.CountOf(ns.MOTE_ITEM)
