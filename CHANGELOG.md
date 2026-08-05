@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.0
+
+- New **Tips** tab: nine concrete recommendations for getting there faster -- where motes actually drop in bulk, why the weekly is the best 20 minutes in the zone, which reagents are Warband-bound and Unique-capped, which "raid" reagents need no raid at all, and which mounts are cheapest to knock out first.
+- **Corrected the unlock chain**: Sopranian Understanding sits inside the *Dealic* research tree, so the gate order is Metrial -> Aealic -> Dealic Understanding -> Sopranian Understanding. The earlier text named the wrong prerequisites.
+- The unlock chain now states that the pet forge is a separate unlock and is not required for mounts.
+- Added the step everyone misses: each looted schematic starts a **Schematic Reassimilation** quest that must be turned in at the Servitor Interface before that mount appears in the forge.
+
 ## 1.1.0
 
 - New **Unlock chain** tab: the full path to unlocking mount crafting, from the Zereth Mortis campaign through the Cypher Research Console to the eleven-quest Finding Tahli / A New Architect chain.

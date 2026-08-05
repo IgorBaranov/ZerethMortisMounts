@@ -63,7 +63,7 @@ ns.unlockChain = {
 	  note = "Ninth quest of \"Forming an Understanding\", from Firim in Exile's Hollow. Unlocks Pocopoc, the Cypher Research Console, world quests and the weekly Patterns Within Patterns.",
 	  x = 34.0, y = 48.1, pinLabel = "Firim, Exile's Hollow" },
 	{ type = "infer", inferQuests = ns.CHAIN_QUESTS, title = "Cypher Research: Sopranian Understanding",
-	  note = "At the Cypher Research Console in Exile's Hollow. Needs the earlier tiers (Metrial, Aealic, Dealic) first; Sopranian Understanding itself costs 220 Cyphers and researches for ~5 days 18 hours. When it finishes, Elder Amir offers the next quest.",
+	  note = "At the Cypher Research Console in Exile's Hollow. Gate order is Metrial Understanding -> Aealic Understanding -> |cffffff00Dealic Understanding|r, and Sopranian Understanding then sits inside the Dealic tree. Community numbers put it at ~220 Cyphers and ~5d 18h of research. When it finishes, Elder Amir offers the next quest.\n|cff888888Note: the PET forge is a separate unlock (Dealic Understanding plus a quest from Pocopoc) and is NOT required for mounts.|r",
 	  x = 34.5, y = 49.7, pinLabel = "Cypher Research Console, Exile's Hollow" },
 	{ type = "quest", id = 64829, title = "Finding Tahli",
 	  note = "From Elder Amir at Pilgrim's Grace (an Ancient Translocator leads there). Find Tahli near the Arrangement Index.",
@@ -98,6 +98,33 @@ ns.unlockChain = {
 	{ type = "quest", id = 65427, title = "A New Architect",
 	  note = "Final step, at the Servitor Interface inside the Protoform Repository. Rewards the mount forge, 450 Genesis Motes, a Cervid Lattice, Tools of Incomprehensible Experimentation and Schematic: Deathrunner.",
 	  x = 68.5, y = 30.1, pinLabel = "Servitor Interface, Protoform Repository" },
+	{ type = "note", title = "Then: one \"Schematic Reassimilation\" per mount",
+	  note = "Looting a schematic is not enough. Each one starts a quest |cffffff00Schematic Reassimilation: <mount>|r that you turn in at the Servitor Interface in the Protoform Repository -- only then does that mount appear in the forge. If a schematic is sitting unused in your bags, this is why.",
+	  x = 68.5, y = 30.1, pinLabel = "Servitor Interface, Protoform Repository" },
+}
+
+-- Farming advice shown on the Tips tab.
+ns.tips = {
+	{ title = "Genesis Motes: devourers, not wildlife",
+	  body = "Motes are the real bottleneck -- 9,850 for all 24 mounts. Wildlife drops a trickle; the devourers that spawn from the invasion portals drop far more, come in dense packs and the Automa NPCs tank them for you. Park at a portal, AoE, repeat. Droning Precipice south of Pilgrim's Grace is the usual spot.",
+	  x = 61.8, y = 58.9, pinLabel = "Devourer farm, Droning Precipice" },
+	{ title = "Do the weekly before anything else",
+	  body = "|cffffff00Patterns Within Patterns|r rewards an Olea Cache, which can contain ANY lattice and most rare reagents, plus ~140 Cyphers. It is the single highest-value 20 minutes in the zone and it is weekly, so never skip it. It also drops Tribute of the Enlightened Elders, the only source of Schematic: Bronze Helicid." },
+	{ title = "Lattices: farm the accelerated / matron versions",
+	  body = "Normal critters drop lattices rarely. The named-up variants (Accelerated Bufonid, Accelerated Helicid, Vombata Matron, Vespoid Overseer) have a much better rate. Kill those on sight and ignore the rest -- and remember lattices stack to 20 and are Warband-bound, so bank extras for alts." },
+	{ title = "Warband-bound reagents: buy on alts too",
+	  body = "The rare reagents bind to Warband, not to character. Lens of Focused Intention is sold by Vilo for 40g and is Unique (2) -- buy your two, craft, buy again. Bauble of Pure Innovation, Unalloyed Bronze Ingot and Eternal Ragepearl are also Unique (2), and Crystallized Echo of the First Song is Unique (3): craft to free the slot before farming another." },
+	{ title = "Sepulcher island reagents need no raid lockout",
+	  body = "Wind's Infinite Call (Enhanced Avian) and Crystallized Echo of the First Song (the humming crystals) are out in the open on the eastern Sepulcher island, not inside the raid. Only Tools of Incomprehensible Experimentation (Lihuvim) and Mawforged Bridle (High Value Cache) actually require going into the Sepulcher.",
+	  x = 77.2, y = 57.5, pinLabel = "Sepulcher island reagents" },
+	{ title = "Sepulcher can be soloed at current gear",
+	  body = "The two raid-only reagents come from LFR-difficulty content that is trivial at modern item levels. Run it on Raid Finder, or solo the earlier bosses. Lihuvim is the eighth boss, so LFR wing 3 is what you want for the Tools." },
+	{ title = "Start Sopranian research immediately",
+	  body = "The research timer (~5d 18h) runs whether you are online or not, and it is the longest single wait in the whole unlock. Queue it the moment Dealic Understanding finishes, then go farm motes while it ticks. Cyphers come fastest from the weekly (~140), Antros (~80) and dailies (~15 each)." },
+	{ title = "Treasure schematics are one-time and account-wide-ish",
+	  body = "Schematics that sit in the world (Vespoid Flutterer, Genesis Crawler, Scarlet Helicid and friends) are a single pickup each -- grab every one in a single sweep of the zone with the Pin buttons on the Mounts tab. Mob-drop schematics (Goldplate Bufonid, Mawdapted Raptora, Buzz) are the grindy ones; farm them while you are killing things for motes anyway." },
+	{ title = "Cheapest mounts first",
+	  body = "If you just want mount count, do the 300-mote recipes first: Reins of the Sundered Zerethsteed and Unsuccessful Prototype Fleetpod. Then the 350s. Buzz, Serenade, Ineffable Skitterer and Heartbond Lupine cost 500 each -- leave them for last." },
 }
 
 -- All 24 Protoform Synthesis mounts.

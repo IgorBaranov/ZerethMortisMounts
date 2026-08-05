@@ -6,7 +6,7 @@ local DEFAULTS = {
 	minimapAngle = 205,
 	filter = "all", -- all | missing | ready
 	selected = 1,
-	tab = "mounts", -- mounts | unlock
+	tab = "mounts", -- mounts | unlock | tips
 }
 
 ns.callbacks = {}
@@ -107,7 +107,10 @@ function ns.UnlockStates()
 	local prevDone = true
 	for i, step in ipairs(ns.unlockChain) do
 		local state
-		if step.type == "infer" then
+		if step.type == "note" then
+			-- informational row, never gates anything
+			state = "note"
+		elseif step.type == "infer" then
 			-- cannot be read from the API; certainly behind us once any of these exists
 			local done = unlocked
 			for _, id in ipairs(step.inferQuests) do
@@ -124,7 +127,9 @@ function ns.UnlockStates()
 			state = "locked"
 		end
 		states[i] = state
-		prevDone = (state == "done")
+		if state ~= "note" then
+			prevDone = (state == "done")
+		end
 	end
 	return states, unlocked
 end

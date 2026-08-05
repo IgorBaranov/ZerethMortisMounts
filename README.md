@@ -14,6 +14,14 @@ One minimap button, one window. No dependencies, no libraries.
 - Header summary: how many you have learned, how many you can craft **right now** with what is in your bags, your current Genesis Motes, and how many motes the remaining mounts still cost.
 - Filters: **All** / **Not learned** / **Craftable now**.
 
+Three tabs:
+
+| Tab | What it does |
+| --- | --- |
+| **Mounts** | All 24 mounts, reagent counts, farm notes, map pins |
+| **Unlock chain** | The full path to unlocking mount crafting, with your current position marked live from the quest log |
+| **Tips** | Concrete advice for getting there faster |
+
 Everything is crafted at the **Protoform Repository** (`68.5, 30.1`, Arrangement Index) — there is a Pin button for that too.
 
 ## Install

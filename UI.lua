@@ -200,12 +200,13 @@ function ns.BuildUI()
 	local tabSpecs = {
 		{ key = "mounts", text = "Mounts" },
 		{ key = "unlock", text = "Unlock chain" },
+		{ key = "tips", text = "Tips" },
 	}
 	local prevTab
 	for i = #tabSpecs, 1, -1 do -- lay out right-to-left so the row hugs the corner
 		local spec = tabSpecs[i]
 		local b = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
-		b:SetSize(110, 22)
+		b:SetSize(spec.key == "tips" and 66 or 110, 22)
 		b:SetText(spec.text)
 		if prevTab then
 			b:SetPoint("RIGHT", prevTab, "LEFT", -4, 0)
@@ -347,7 +348,79 @@ function ns.BuildUI()
 	d.empty:SetText("Pick a mount on the left.")
 
 	ns.BuildUnlockPanel(f)
+	ns.BuildTipsPanel(f)
 	ns.RegisterRefresh(ns.UpdateWindow)
+end
+
+--------------------------------------------------------------------------------
+-- tips tab
+--------------------------------------------------------------------------------
+
+function ns.BuildTipsPanel(f)
+	local box = MakeBackdropFrame(f)
+	box:SetPoint("TOPLEFT", 12, -102)
+	box:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -12, 16)
+	box:SetBackdropColor(0, 0, 0, 0.35)
+	box:Hide()
+	f.tipsBox = box
+
+	local scroll = CreateFrame("ScrollFrame", "ZerethMortisMountsTips", box, "UIPanelScrollFrameTemplate")
+	scroll:SetPoint("TOPLEFT", 10, -10)
+	scroll:SetPoint("BOTTOMRIGHT", -28, 10)
+
+	local child = CreateFrame("Frame", nil, scroll)
+	local cWidth = WIDTH - 66
+	child:SetSize(cWidth, 10)
+	scroll:SetScrollChild(child)
+	box.child = child
+
+	box.rows = {}
+	for i, tip in ipairs(ns.tips) do
+		local row = CreateFrame("Frame", nil, child)
+		row:SetWidth(cWidth)
+
+		row.bullet = row:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+		row.bullet:SetPoint("TOPLEFT", 4, -1)
+		row.bullet:SetText("|cffffd100" .. i .. "|r")
+		row.bullet:SetWidth(26)
+		row.bullet:SetJustifyH("RIGHT")
+
+		row.title = row:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+		row.title:SetPoint("TOPLEFT", row.bullet, "TOPRIGHT", 10, -2)
+		row.title:SetJustifyH("LEFT")
+		row.title:SetWidth(cWidth - 130)
+		row.title:SetText(tip.title)
+		row.title:SetTextColor(unpack(GOLD))
+
+		row.pin = MakePinButton(row)
+		row.pin:SetPoint("TOPRIGHT", row, "TOPRIGHT", -8, 0)
+		SetPin(row.pin, tip.x, tip.y, tip.pinLabel or tip.title)
+
+		row.body = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+		row.body:SetPoint("TOPLEFT", row.title, "BOTTOMLEFT", 0, -4)
+		row.body:SetWidth(cWidth - 120)
+		row.body:SetJustifyH("LEFT")
+		row.body:SetTextColor(0.78, 0.78, 0.84)
+		row.body:SetText(tip.body)
+
+		box.rows[i] = row
+	end
+
+	-- lay out once; nothing here depends on player state
+	local anchor, total = nil, 8
+	for i, row in ipairs(box.rows) do
+		row:ClearAllPoints()
+		if anchor then
+			row:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT", 0, -14)
+		else
+			row:SetPoint("TOPLEFT", child, "TOPLEFT", 0, -6)
+		end
+		local h = 20 + row.body:GetStringHeight() + 6
+		row:SetHeight(h)
+		total = total + h + 14
+		anchor = row
+	end
+	child:SetHeight(total + 10)
 end
 
 --------------------------------------------------------------------------------
@@ -359,6 +432,7 @@ local STATE_STYLE = {
 	active = { icon = "Interface\\RaidFrame\\ReadyCheck-Waiting",  color = { 1, 0.85, 0.3 } },
 	next   = { atlas = "QuestNormal", color = { 1, 1, 1 } },
 	locked = { icon = nil,                                          color = { 0.45, 0.45, 0.5 } },
+	note   = { atlas = "QuestTurnin",                               color = { 0.85, 0.75, 1.00 } },
 }
 
 local STATE_TEXT = {
@@ -366,6 +440,7 @@ local STATE_TEXT = {
 	active = "|cffffd100in progress -- you are here|r",
 	next = "|cffffffffnext step|r",
 	locked = "|cff777777locked|r",
+	note = "|cffb9a4ffper mount|r",
 }
 
 function ns.BuildUnlockPanel(f)
@@ -558,11 +633,16 @@ function ns.UpdateWindow()
 	f.listBox:SetShown(mountsTab)
 	f.detailBox:SetShown(mountsTab)
 	for _, b in ipairs(f.filterButtons) do b:SetShown(mountsTab) end
-	f.unlockBox:SetShown(not mountsTab)
+	f.unlockBox:SetShown(tab == "unlock")
+	f.tipsBox:SetShown(tab == "tips")
 	if not mountsTab then
 		local collected, total = ns.Summary()
-		f.summary:SetText(("Learned |cffffd100%d|r of |cffffd100%d|r"):format(collected, total))
-		ns.UpdateUnlockPanel()
+		if tab == "tips" then
+			f.summary:SetText(("Learned |cffffd100%d|r of |cffffd100%d|r   •   ways to get there faster"):format(collected, total))
+		else
+			f.summary:SetText(("Learned |cffffd100%d|r of |cffffd100%d|r"):format(collected, total))
+			ns.UpdateUnlockPanel()
+		end
 		return
 	end
 
