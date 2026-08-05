@@ -103,6 +103,60 @@ ns.unlockChain = {
 	  x = 68.5, y = 30.1, pinLabel = "Servitor Interface, Protoform Repository" },
 }
 
+-- Per-mount schematic metadata, merged into ns.mounts[].schematic below.
+--   [1] the "Schematic Reassimilation: <mount>" quest the schematic starts.
+--       Completing it is what actually puts the recipe in the forge, and it is
+--       readable via C_QuestLog.IsQuestFlaggedCompleted -- so we can tell you
+--       whether you already own the recipe.
+--   [2] source bucket, used to group the Schematics tab.
+ns.SOURCE_TYPES = {
+	{ key = "treasure", label = "Lying in the world -- one pickup each",
+	  hint = "Go get these first: they are guaranteed, not RNG. One sweep of the zone with the Pin buttons clears the lot." },
+	{ key = "mob", label = "Mob drops -- low chance, farm while you grind motes",
+	  hint = "No shortcut. Kill these while farming Genesis Motes anyway." },
+	{ key = "cache", label = "Reputation and weekly caches",
+	  hint = "Gated by time, not effort. Do the weekly every week and the paragon boxes will follow." },
+	{ key = "raid", label = "Inside Sepulcher of the First Ones",
+	  hint = "Raid Finder is enough. Both are pickups in the open, not boss drops." },
+	{ key = "quest", label = "Quest and achievement rewards",
+	  hint = "Handed to you by progression. Nothing to farm." },
+	{ key = "puzzle", label = "Puzzle reward",
+	  hint = "The Locus Shift minigame. Solve it once." },
+}
+
+local SCHEMATIC_META = {
+	["Adorned Vombata"]                   = { 65401, "treasure" },
+	["Curious Crystalsniffer"]            = { 65399, "raid" },
+	["Darkened Vombata"]                  = { 65400, "treasure" },
+	["Goldplate Bufonid"]                 = { 65391, "mob" },
+	["Russet Bufonid"]                    = { 65394, "cache" },
+	["Prototype Leaper"]                  = { 65393, "treasure" },
+	["Deathrunner"]                       = { 65380, "quest" },
+	["Pale Regal Cervid"]                 = { 65375, "quest" },
+	["Reins of the Sundered Zerethsteed"] = { 65379, "treasure" },
+	["Bronze Helicid"]                    = { 65385, "cache" },
+	["Scarlet Helicid"]                   = { 65387, "treasure" },
+	["Serenade"]                          = { 65384, "raid" },
+	["Unsuccessful Prototype Fleetpod"]   = { 65386, "puzzle" },
+	["Heartbond Lupine"]                  = { 65680, "mob" },
+	["Desertwing Hunter"]                 = { 65381, "treasure" },
+	["Mawdapted Raptora"]                 = { 65382, "mob" },
+	["Raptora Swooper"]                   = { 65383, "treasure" },
+	["Genesis Crawler"]                   = { 65388, "treasure" },
+	["Ineffable Skitterer"]               = { 65390, "treasure" },
+	["Tarachnid Creeper"]                 = { 65389, "treasure" },
+	["Bronzewing Vespoid"]                = { 65396, "treasure" },
+	["Buzz"]                              = { 65397, "mob" },
+	["Forged Spiteflyer"]                 = { 65398, "treasure" },
+	["Vespoid Flutterer"]                 = { 65395, "treasure" },
+}
+
+for _, mount in ipairs(ns.mounts) do
+	local meta = SCHEMATIC_META[mount.name]
+	mount.schematic.quest = meta[1]
+	mount.schematic.srcType = meta[2]
+end
+
 -- Farming advice shown on the Tips tab.
 ns.tips = {
 	{ title = "Genesis Motes: devourers, not wildlife",

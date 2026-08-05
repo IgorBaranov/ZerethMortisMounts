@@ -19,8 +19,11 @@ Three tabs:
 | Tab | What it does |
 | --- | --- |
 | **Mounts** | All 24 mounts, reagent counts, farm notes, map pins |
+| **Schematics** | Every recipe grouped by source, with `recipe owned` / `recipe missing` read from your quest log |
 | **Unlock chain** | The full path to unlocking mount crafting, with your current position marked live from the quest log |
 | **Tips** | Concrete advice for getting there faster |
+
+A **Pin the forge** button sits in the header on every tab — the Protoform Repository is where every mount is crafted and every schematic is handed in.
 
 Everything is crafted at the **Protoform Repository** (`68.5, 30.1`, Arrangement Index) — there is a Pin button for that too.
 

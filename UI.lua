@@ -199,6 +199,7 @@ function ns.BuildUI()
 	f.tabButtons = {}
 	local tabSpecs = {
 		{ key = "mounts", text = "Mounts" },
+		{ key = "schematics", text = "Schematics" },
 		{ key = "unlock", text = "Unlock chain" },
 		{ key = "tips", text = "Tips" },
 	}
@@ -206,7 +207,7 @@ function ns.BuildUI()
 	for i = #tabSpecs, 1, -1 do -- lay out right-to-left so the row hugs the corner
 		local spec = tabSpecs[i]
 		local b = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
-		b:SetSize(spec.key == "tips" and 66 or 110, 22)
+		b:SetSize(spec.key == "tips" and 60 or 104, 22)
 		b:SetText(spec.text)
 		if prevTab then
 			b:SetPoint("RIGHT", prevTab, "LEFT", -4, 0)
@@ -248,6 +249,26 @@ function ns.BuildUI()
 		table.insert(f.filterButtons, b)
 		prev = b
 	end
+
+	-- always-visible forge pin: the one place everything is crafted
+	local forge = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
+	forge:SetSize(232, 22)
+	forge:SetPoint("TOPRIGHT", f.tabButtons[1], "BOTTOMRIGHT", 0, -6)
+	forge:SetText(("Pin the forge  (%.1f, %.1f)"):format(ns.FORGE.x, ns.FORGE.y))
+	forge:SetScript("OnClick", function()
+		ns.Pin(ns.FORGE.x, ns.FORGE.y, ns.FORGE.name)
+	end)
+	forge:SetScript("OnEnter", function(self)
+		GameTooltip:SetOwner(self, "ANCHOR_LEFT")
+		GameTooltip:AddLine(ns.FORGE.name, 1, 0.82, 0)
+		GameTooltip:AddLine(ns.FORGE.note, 1, 1, 1, true)
+		GameTooltip:AddLine(" ")
+		GameTooltip:AddLine("Every mount is crafted here, and every schematic is handed in here.", 0.7, 0.8, 1, true)
+		GameTooltip:AddLine("Click to drop a waypoint and start tracking it.", 0.6, 0.6, 0.6, true)
+		GameTooltip:Show()
+	end)
+	forge:SetScript("OnLeave", GameTooltip_Hide)
+	f.forgeButton = forge
 
 	-- list
 	local listBox = MakeBackdropFrame(f)
@@ -309,7 +330,7 @@ function ns.BuildUI()
 
 	d.schematicHeader = d:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
 	d.schematicHeader:SetPoint("TOPLEFT", d.icon, "BOTTOMLEFT", 0, -12)
-	d.schematicHeader:SetText("|cffffd100Schematic|r  |cff808080(unlocks the recipe)|r")
+	d.schematicHeader:SetText("|cffffd100Schematic|r  |cff808080(hand in at the forge to get the recipe)|r")
 
 	d.schematicPin = MakePinButton(d)
 	d.schematicPin:SetPoint("TOPRIGHT", d, "TOPRIGHT", 0, -64)
@@ -349,7 +370,134 @@ function ns.BuildUI()
 
 	ns.BuildUnlockPanel(f)
 	ns.BuildTipsPanel(f)
+	ns.BuildSchematicsPanel(f)
 	ns.RegisterRefresh(ns.UpdateWindow)
+end
+
+--------------------------------------------------------------------------------
+-- schematics tab -- where every recipe comes from, and whether you own it
+--------------------------------------------------------------------------------
+
+function ns.BuildSchematicsPanel(f)
+	local box = MakeBackdropFrame(f)
+	box:SetPoint("TOPLEFT", 12, -102)
+	box:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -12, 16)
+	box:SetBackdropColor(0, 0, 0, 0.35)
+	box:Hide()
+	f.schematicsBox = box
+
+	local scroll = CreateFrame("ScrollFrame", "ZerethMortisMountsSchematics", box, "UIPanelScrollFrameTemplate")
+	scroll:SetPoint("TOPLEFT", 10, -10)
+	scroll:SetPoint("BOTTOMRIGHT", -28, 10)
+
+	local child = CreateFrame("Frame", nil, scroll)
+	local cWidth = WIDTH - 66
+	child:SetSize(cWidth, 10)
+	scroll:SetScrollChild(child)
+	box.child = child
+	box.width = cWidth
+
+	box.legend = child:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+	box.legend:SetPoint("TOPLEFT", 4, -2)
+	box.legend:SetWidth(cWidth - 8)
+	box.legend:SetJustifyH("LEFT")
+
+	-- one header per source bucket, one row per mount
+	box.groups = {}
+	for _, group in ipairs(ns.SchematicGroups()) do
+		local g = { rows = {} }
+
+		g.header = child:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+		g.header:SetJustifyH("LEFT")
+		g.header:SetWidth(cWidth - 8)
+		g.header:SetText("|cffffd100" .. group.spec.label .. "|r")
+
+		g.hint = child:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+		g.hint:SetJustifyH("LEFT")
+		g.hint:SetWidth(cWidth - 90)
+		g.hint:SetText(group.spec.hint)
+
+		for _, mount in ipairs(group.mounts) do
+			local row = CreateFrame("Frame", nil, child)
+			row:SetWidth(cWidth)
+			row.mount = mount
+
+			row.status = row:CreateTexture(nil, "ARTWORK")
+			row.status:SetSize(15, 15)
+			row.status:SetPoint("TOPLEFT", 16, -2)
+
+			row.name = row:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+			row.name:SetPoint("TOPLEFT", row.status, "TOPRIGHT", 7, 1)
+			row.name:SetJustifyH("LEFT")
+			row.name:SetWidth(232)
+			row.name:SetWordWrap(false)
+			row.name:SetText(mount.name)
+
+			row.how = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+			row.how:SetPoint("TOPLEFT", row.name, "TOPRIGHT", 8, 0)
+			row.how:SetPoint("RIGHT", row, "RIGHT", -140, 0)
+			row.how:SetJustifyH("LEFT")
+			row.how:SetTextColor(0.72, 0.72, 0.78)
+			row.how:SetText(mount.schematic.how)
+
+			row.state = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+			row.state:SetPoint("TOPRIGHT", row, "TOPRIGHT", -70, -2)
+			row.state:SetJustifyH("RIGHT")
+
+			row.pin = MakePinButton(row)
+			row.pin:SetPoint("TOPRIGHT", row, "TOPRIGHT", -8, 0)
+			SetPin(row.pin, mount.schematic.x, mount.schematic.y, "Schematic: " .. mount.name)
+
+			table.insert(g.rows, row)
+		end
+		table.insert(box.groups, g)
+	end
+end
+
+function ns.UpdateSchematicsPanel()
+	local box = ns.window.schematicsBox
+	local _, total, _, _, recipes = ns.Summary()
+	box.legend:SetText(("You own |cffffd100%d|r of |cffffd100%d|r recipes. A schematic only becomes a recipe once you hand it in at the Servitor Interface in the Protoform Repository -- \"recipe\" below means that hand-in is done."):format(recipes, total))
+
+	local anchor, anchorPoint = box.legend, "BOTTOMLEFT"
+	local y = -14
+	local totalH = box.legend:GetStringHeight() + 18
+
+	for _, g in ipairs(box.groups) do
+		g.header:ClearAllPoints()
+		g.header:SetPoint("TOPLEFT", anchor, anchorPoint, 0, y)
+		g.hint:ClearAllPoints()
+		g.hint:SetPoint("TOPLEFT", g.header, "BOTTOMLEFT", 0, -2)
+		totalH = totalH + 16 + g.hint:GetStringHeight() + 8
+		anchor, anchorPoint, y = g.hint, "BOTTOMLEFT", -6
+
+		for _, row in ipairs(g.rows) do
+			local has = ns.HasRecipe(row.mount)
+			local collected = ns.IsCollected(row.mount.spellID)
+			row.status:SetTexture(has and ICON_READY or ICON_NOT)
+			row.name:SetTextColor(unpack(has and GREEN or { 1, 1, 1 }))
+			if collected then
+				row.state:SetText("|cff55ee66mount collected|r")
+			elseif has then
+				row.state:SetText("|cff9fd8ffrecipe owned|r")
+			else
+				row.state:SetText("|cffff8888recipe missing|r")
+			end
+
+			row:ClearAllPoints()
+			row:SetPoint("TOPLEFT", anchor, anchorPoint, 0, y)
+			local h = math.max(20, row.how:GetStringHeight() + 6)
+			row:SetHeight(h)
+			totalH = totalH + h + 3
+			anchor, anchorPoint, y = row, "BOTTOMLEFT", -3
+		end
+		y = -16
+		totalH = totalH + 16
+	end
+
+	-- group headers/hints are children of `child`, rows too; anchoring chains
+	-- through them, so the last anchor determines the content height
+	box.child:SetHeight(totalH + 14)
 end
 
 --------------------------------------------------------------------------------
@@ -568,13 +716,17 @@ local function UpdateDetail(mount)
 	d.icon:SetTexture(ns.MountIcon(mount.spellID))
 	d.name:SetText(mount.name)
 	d.name:SetTextColor(unpack(collected and GREEN or GOLD))
-	d.sub:SetText(("%s  •  %s  •  %s"):format(
+	d.sub:SetText(("%s  •  %s  •  %s  •  %s"):format(
 		mount.family,
 		mount.flying and "Flying" or "Ground",
-		collected and "|cff55ee66Already learned|r" or "|cffff6666Not learned|r"))
+		collected and "|cff55ee66Already learned|r" or "|cffff6666Not learned|r",
+		ns.HasRecipe(mount) and "|cff9fd8ffrecipe owned|r" or "|cffaa8888no recipe|r"))
 
 	local s = mount.schematic
-	d.schematicText:SetText(s.how)
+	local recipeLine = ns.HasRecipe(mount)
+		and "|cff55ee66You already own this recipe|r -- the schematic is handed in, it is in the forge."
+		or "|cffff8888Recipe not in your forge yet.|r Get the schematic, then hand it in at the Servitor Interface."
+	d.schematicText:SetText(recipeLine .. "\n" .. s.how)
 	SetPin(d.schematicPin, s.x, s.y, "Schematic: " .. mount.name)
 
 	-- reagents, laid out top-down with dynamic heights
@@ -635,10 +787,14 @@ function ns.UpdateWindow()
 	for _, b in ipairs(f.filterButtons) do b:SetShown(mountsTab) end
 	f.unlockBox:SetShown(tab == "unlock")
 	f.tipsBox:SetShown(tab == "tips")
+	f.schematicsBox:SetShown(tab == "schematics")
 	if not mountsTab then
-		local collected, total = ns.Summary()
+		local collected, total, _, _, recipes = ns.Summary()
 		if tab == "tips" then
 			f.summary:SetText(("Learned |cffffd100%d|r of |cffffd100%d|r   •   ways to get there faster"):format(collected, total))
+		elseif tab == "schematics" then
+			f.summary:SetText(("Recipes owned |cffffd100%d|r of |cffffd100%d|r   •   mounts learned |cffffd100%d|r"):format(recipes, total, collected))
+			ns.UpdateSchematicsPanel()
 		else
 			f.summary:SetText(("Learned |cffffd100%d|r of |cffffd100%d|r"):format(collected, total))
 			ns.UpdateUnlockPanel()

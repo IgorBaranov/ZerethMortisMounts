@@ -6,7 +6,7 @@ local DEFAULTS = {
 	minimapAngle = 205,
 	filter = "all", -- all | missing | ready
 	selected = 1,
-	tab = "mounts", -- mounts | unlock | tips
+	tab = "mounts", -- mounts | schematics | unlock | tips
 }
 
 ns.callbacks = {}
@@ -56,6 +56,12 @@ function ns.MountIcon(spellID)
 	return 134400
 end
 
+-- The recipe is in the forge once the Schematic Reassimilation quest is done.
+function ns.HasRecipe(mount)
+	local q = mount.schematic and mount.schematic.quest
+	return q and C_QuestLog.IsQuestFlaggedCompleted(q) or false
+end
+
 function ns.IsCollected(spellID)
 	local mountID = C_MountJournal.GetMountFromSpell(spellID)
 	if not mountID then return false end
@@ -80,8 +86,9 @@ function ns.Requirements(mount)
 end
 
 function ns.Summary()
-	local collected, ready, motesNeeded = 0, 0, 0
+	local collected, ready, motesNeeded, recipes = 0, 0, 0, 0
 	for _, mount in ipairs(ns.mounts) do
+		if ns.HasRecipe(mount) then recipes = recipes + 1 end
 		if ns.IsCollected(mount.spellID) then
 			collected = collected + 1
 		else
@@ -90,7 +97,25 @@ function ns.Summary()
 			if isReady then ready = ready + 1 end
 		end
 	end
-	return collected, #ns.mounts, ready, motesNeeded
+	return collected, #ns.mounts, ready, motesNeeded, recipes
+end
+
+-- Mounts grouped by schematic source bucket, in ns.SOURCE_TYPES order.
+function ns.SchematicGroups()
+	local byType = {}
+	for _, mount in ipairs(ns.mounts) do
+		local t = mount.schematic.srcType
+		byType[t] = byType[t] or {}
+		table.insert(byType[t], mount)
+	end
+	local out = {}
+	for _, spec in ipairs(ns.SOURCE_TYPES) do
+		local list = byType[spec.key]
+		if list then
+			table.insert(out, { spec = spec, mounts = list })
+		end
+	end
+	return out
 end
 
 -- Unlock-chain step states: "done" | "active" | "next" | "locked"

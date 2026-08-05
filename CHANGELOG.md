@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.3.0
+
+- New **Schematics** tab: every recipe and where it comes from, grouped by source -- lying in the world, mob drop, reputation cache, inside the Sepulcher, quest reward, puzzle -- so you can plan one sweep instead of clicking through 24 mounts.
+- **The addon now knows which recipes you own.** Each schematic starts a Schematic Reassimilation quest, and that hand-in is readable, so every mount shows `recipe owned` / `recipe missing` for real instead of guessing.
+- Header counter for recipes owned, and a `recipe owned` marker on the Mounts tab.
+- **Always-visible forge pin** in the window header: one click drops a waypoint on the Protoform Repository from any tab.
+
 ## 1.2.0
 
 - New **Tips** tab: nine concrete recommendations for getting there faster -- where motes actually drop in bulk, why the weekly is the best 20 minutes in the zone, which reagents are Warband-bound and Unique-capped, which "raid" reagents need no raid at all, and which mounts are cheapest to knock out first.
