@@ -23,6 +23,8 @@ Three tabs:
 | **Unlock chain** | The full path to unlocking mount crafting, with your current position marked live from the quest log |
 | **Tips** | Concrete advice for getting there faster |
 
+When a mount becomes genuinely craftable — recipe owned, every reagent in the bag — a small popup appears. No sound, it fades on its own, drag it wherever you like, click it to jump to that mount.
+
 A **Pin the forge** button sits in the header on every tab — the Protoform Repository is where every mount is crafted and every schematic is handed in.
 
 Everything is crafted at the **Protoform Repository** (`68.5, 30.1`, Arrangement Index) — there is a Pin button for that too.
@@ -41,6 +43,7 @@ Then `/reload` or restart the game. Files must sit directly inside that folder (
 
 - Click the minimap button (Genesis Mote icon) to open and close the window. Drag it to move it around the minimap ring; the position is saved.
 - `/zmm` or `/zerethmounts` does the same.
+- `/zmm alerts` toggles the craft popup. `/zmm reset` puts the popup back at the top of the screen.
 - Escape closes the window; drag its background to move it.
 - Hover a mount in the list for its normal item tooltip; hover a reagent for the reagent's tooltip.
 
@@ -59,3 +62,4 @@ Then `/reload` or restart the game. Files must sit directly inside that folder (
 | `Data.lua` | The 24 recipes, reagent sources, coordinates |
 | `Core.lua` | Item counts, mount-journal lookups, waypoints, events, slash command |
 | `UI.lua` | The window and the minimap button |
+| `Alerts.lua` | The craft-ready popup |

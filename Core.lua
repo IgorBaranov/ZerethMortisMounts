@@ -7,6 +7,7 @@ local DEFAULTS = {
 	filter = "all", -- all | missing | ready
 	selected = 1,
 	tab = "mounts", -- mounts | schematics | unlock | tips
+	alerts = true,
 }
 
 ns.callbacks = {}
@@ -228,7 +229,11 @@ loader:SetScript("OnEvent", function(_, event, arg1)
 	elseif event == "PLAYER_LOGIN" then
 		ns.BuildUI()
 		ns.BuildMinimapButton()
+		-- give bag and quest data time to cache before taking a baseline,
+		-- otherwise the first bag update looks like everything just unlocked
+		C_Timer.After(6, ns.PrimeCraftable)
 	else
+		ns.CheckCraftable()
 		if ns.window and ns.window:IsShown() then
 			ns.Refresh()
 		end
@@ -237,6 +242,17 @@ end)
 
 SLASH_ZERETHMORTISMOUNTS1 = "/zmm"
 SLASH_ZERETHMORTISMOUNTS2 = "/zerethmounts"
-SlashCmdList.ZERETHMORTISMOUNTS = function()
-	ns.Toggle()
+SlashCmdList.ZERETHMORTISMOUNTS = function(msg)
+	msg = (msg or ""):lower():gsub("^%s+", ""):gsub("%s+$", "")
+	if msg == "alerts" then
+		ZerethMortisMountsDB.alerts = not ZerethMortisMountsDB.alerts
+		ns.Print(ZerethMortisMountsDB.alerts
+			and "craft alerts |cff55ee66on|r."
+			or "craft alerts |cffff6666off|r.")
+	elseif msg == "reset" then
+		ZerethMortisMountsDB.toastPos = nil
+		ns.Print("alert popup position reset to the top of the screen.")
+	else
+		ns.Toggle()
+	end
 end

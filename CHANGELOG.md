@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.4.0
+
+- **Craft alert.** The moment you have everything for a mount -- recipe owned, every reagent in the bag, mount not yet collected -- a small popup appears. No sound, no screen-centre banner: it fades out on its own, is draggable, and clicking it jumps straight to that mount.
+- Only genuinely new opportunities fire, so spending mats and re-earning them alerts you again, and logging in does not dump a stack of popups.
+- `/zmm alerts` turns the popup off and on. `/zmm reset` moves it back to the top of the screen.
+
 ## 1.3.0
 
 - New **Schematics** tab: every recipe and where it comes from, grouped by source -- lying in the world, mob drop, reputation cache, inside the Sepulcher, quest reward, puzzle -- so you can plan one sweep instead of clicking through 24 mounts.
