@@ -4,7 +4,7 @@
 ## Version: @project-version@
 ## Author: Ihor
 ## X-License: MIT
-# ## X-Curse-Project-ID: 000000
+## X-Curse-Project-ID: 1640931
 ## SavedVariables: ZerethMortisMountsDB
 ## IconTexture: Interface\Icons\INV_Misc_EnchantedPearlE
 ## Category: Collections

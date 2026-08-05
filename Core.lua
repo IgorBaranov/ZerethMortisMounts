@@ -99,22 +99,21 @@ function ns.UnlockStates()
 	local unlocked = IsPlayerSpell(ns.UNLOCK_SPELL)
 		or C_QuestLog.IsQuestFlaggedCompleted(65427)
 	local states = {}
-	local anyQuestTouched = false
-	for _, step in ipairs(ns.unlockChain) do
-		if step.type == "quest" then
-			if C_QuestLog.IsQuestFlaggedCompleted(step.id) or C_QuestLog.IsOnQuest(step.id) then
-				anyQuestTouched = true
-				break
-			end
-		end
+
+	local function touched(id)
+		return C_QuestLog.IsQuestFlaggedCompleted(id) or C_QuestLog.IsOnQuest(id)
 	end
 
 	local prevDone = true
 	for i, step in ipairs(ns.unlockChain) do
 		local state
-		if step.type == "research" then
-			-- inferred: research is certainly finished once any chain quest exists
-			state = (unlocked or anyQuestTouched) and "done" or "next"
+		if step.type == "infer" then
+			-- cannot be read from the API; certainly behind us once any of these exists
+			local done = unlocked
+			for _, id in ipairs(step.inferQuests) do
+				if touched(id) then done = true break end
+			end
+			state = done and "done" or (prevDone and "next" or "locked")
 		elseif C_QuestLog.IsQuestFlaggedCompleted(step.id) or unlocked then
 			state = "done"
 		elseif C_QuestLog.IsOnQuest(step.id) then

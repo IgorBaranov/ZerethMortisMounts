@@ -48,31 +48,56 @@ ns.reagents = {
 -- chain has been picked up. Quest steps use IsQuestFlaggedCompleted/IsOnQuest.
 ns.UNLOCK_SPELL = 366367 -- Protoform Synthesis (Mount) -- known == craft unlocked
 
+-- Chain quest IDs, used to infer that the research step is behind us.
+ns.CHAIN_QUESTS = { 64829, 64745, 64759, 64761, 64762, 64763, 64766, 64767, 65420, 65426, 65427 }
+
+-- Step types:
+--   quest    -- tracked directly via the quest log
+--   infer    -- cannot be read from the API; done once any quest in inferQuests
+--               has been completed or picked up
+-- x/y put a Pin button on the row. NPC coordinates are approximate.
 ns.unlockChain = {
-	{ type = "research", title = "Cypher Research: Sopranian Understanding",
-	  note = "At the Cypher Research Console in Exile's Hollow. Needs the earlier tiers (Metrial, Aealic, Dealic) first; Sopranian Understanding itself costs 220 Cyphers and researches for ~5 days 18 hours. When it finishes, Elder Amir offers the next quest." },
+	{ type = "infer", inferQuests = { 64230 }, title = "Zereth Mortis campaign, chapters 1-2",
+	  note = "\"Into the Unknown\" and \"We Battle Onward\". Starts from the call board / Oribos. Just follow the campaign." },
+	{ type = "quest", id = 64230, title = "Cyphers of the First Ones  (campaign, ch. 3)",
+	  note = "Ninth quest of \"Forming an Understanding\", from Firim in Exile's Hollow. Unlocks Pocopoc, the Cypher Research Console, world quests and the weekly Patterns Within Patterns.",
+	  x = 34.0, y = 48.1, pinLabel = "Firim, Exile's Hollow" },
+	{ type = "infer", inferQuests = ns.CHAIN_QUESTS, title = "Cypher Research: Sopranian Understanding",
+	  note = "At the Cypher Research Console in Exile's Hollow. Needs the earlier tiers (Metrial, Aealic, Dealic) first; Sopranian Understanding itself costs 220 Cyphers and researches for ~5 days 18 hours. When it finishes, Elder Amir offers the next quest.",
+	  x = 34.5, y = 49.7, pinLabel = "Cypher Research Console, Exile's Hollow" },
 	{ type = "quest", id = 64829, title = "Finding Tahli",
-	  note = "From Elder Amir. Find Tahli near the Arrangement Index." },
+	  note = "From Elder Amir at Pilgrim's Grace (an Ancient Translocator leads there). Find Tahli near the Arrangement Index.",
+	  x = 60.0, y = 53.0, pinLabel = "Elder Amir, Pilgrim's Grace (approx.)" },
 	{ type = "quest", id = 64745, title = "Selfless Preservation",
-	  note = "Follow the trail inside the Arrangement Index." },
+	  note = "From Tahli, at the ruins buried under the sands near the Arrangement Index.",
+	  x = 64.2, y = 30.5, pinLabel = "Tahli, Arrangement Index (approx.)" },
 	{ type = "quest", id = 64759, title = "Junk's Not Dead",
-	  note = "Obtain glyphs from 6 Depleted Servitors around the Arrangement Index. Runs together with Core Competency." },
+	  note = "From Tahli. Obtain glyphs from 6 Depleted Servitors around the Arrangement Index. Runs together with Core Competency.",
+	  x = 64.2, y = 30.5, pinLabel = "Tahli, Arrangement Index (approx.)" },
 	{ type = "quest", id = 64761, title = "Core Competency",
-	  note = "Charge a Depleted Automa Core by draining slain wild creatures." },
+	  note = "From Tahli. Charge a Depleted Automa Core by draining slain wild creatures.",
+	  x = 64.2, y = 30.5, pinLabel = "Tahli, Arrangement Index (approx.)" },
 	{ type = "quest", id = 64762, title = "Revival of the Fittest",
-	  note = "Revive the Hidden Servitor with the charged core." },
+	  note = "From Tahli. Revive the Hidden Servitor with the charged core; turns in to Kodah.",
+	  x = 64.2, y = 30.5, pinLabel = "Tahli, Arrangement Index (approx.)" },
 	{ type = "quest", id = 64763, title = "Maintenance Mode",
-	  note = "Runs together with Access Request." },
+	  note = "Follow-up at the Arrangement Index. Runs together with Access Request.",
+	  x = 64.2, y = 30.5, pinLabel = "Arrangement Index (approx.)" },
 	{ type = "quest", id = 64766, title = "Access Request",
-	  note = "Runs together with Maintenance Mode." },
+	  note = "Runs together with Maintenance Mode.",
+	  x = 64.2, y = 30.5, pinLabel = "Arrangement Index (approx.)" },
 	{ type = "quest", id = 64767, title = "The Final Song",
-	  note = "Concludes the Tahli storyline." },
+	  note = "From Kodah: defend him and restore the Protoform Repository. Turns in to Tahli.",
+	  x = 68.5, y = 30.1, pinLabel = "Protoform Repository" },
 	{ type = "quest", id = 65420, title = "Judgment Call",
-	  note = "Speak to Elder Amir in Pilgrim's Grace." },
+	  note = "From Tahli; speak to Elder Amir in Pilgrim's Grace.",
+	  x = 60.0, y = 53.0, pinLabel = "Elder Amir, Pilgrim's Grace (approx.)" },
 	{ type = "quest", id = 65426, title = "The Lost Component",
-	  note = "Recover the missing forge component." },
+	  note = "Recover the missing forge component near the Protoform Repository.",
+	  x = 68.5, y = 30.1, pinLabel = "Protoform Repository" },
 	{ type = "quest", id = 65427, title = "A New Architect",
-	  note = "Final step. Rewards the mount forge, 450 Genesis Motes, a Cervid Lattice, Tools of Incomprehensible Experimentation and Schematic: Deathrunner." },
+	  note = "Final step, at the Servitor Interface inside the Protoform Repository. Rewards the mount forge, 450 Genesis Motes, a Cervid Lattice, Tools of Incomprehensible Experimentation and Schematic: Deathrunner.",
+	  x = 68.5, y = 30.1, pinLabel = "Servitor Interface, Protoform Repository" },
 }
 
 -- All 24 Protoform Synthesis mounts.

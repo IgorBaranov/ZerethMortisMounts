@@ -392,6 +392,7 @@ function ns.BuildUnlockPanel(f)
 	box.header:SetJustifyH("LEFT")
 
 	box.steps = {}
+	local questNo = 0
 	for i, step in ipairs(ns.unlockChain) do
 		local row = CreateFrame("Frame", nil, child)
 		row:SetWidth(cWidth)
@@ -402,7 +403,10 @@ function ns.BuildUnlockPanel(f)
 
 		row.num = row:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
 		row.num:SetPoint("TOPLEFT", row.icon, "TOPRIGHT", 8, -2)
-		row.num:SetText(step.type == "research" and "" or tostring(i - 1) .. ".")
+		if step.type == "quest" then
+			questNo = questNo + 1
+			row.num:SetText(questNo .. ".")
+		end
 
 		row.title = row:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 		row.title:SetPoint("TOPLEFT", row.icon, "TOPRIGHT", 30, -1)
@@ -410,11 +414,15 @@ function ns.BuildUnlockPanel(f)
 		row.title:SetText(step.title)
 
 		row.state = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-		row.state:SetPoint("TOPRIGHT", row, "TOPRIGHT", -8, -3)
+		row.state:SetPoint("TOPRIGHT", row, "TOPRIGHT", -70, -3)
+
+		row.pin = MakePinButton(row)
+		row.pin:SetPoint("TOPRIGHT", row, "TOPRIGHT", -8, 0)
+		SetPin(row.pin, step.x, step.y, step.pinLabel or step.title)
 
 		row.note = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
 		row.note:SetPoint("TOPLEFT", row.title, "BOTTOMLEFT", 0, -3)
-		row.note:SetWidth(cWidth - 80)
+		row.note:SetWidth(cWidth - 140)
 		row.note:SetJustifyH("LEFT")
 		row.note:SetTextColor(0.68, 0.68, 0.74)
 		row.note:SetText(step.note)
