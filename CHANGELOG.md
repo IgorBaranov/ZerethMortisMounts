@@ -11,6 +11,7 @@
   - Mawforged Bridle: corrected -- the High Value Cache is Normal+ only (never Raid Finder), weekly, and needs the Security Override Orb from Taskmaster Xy'pro at 3+ Synergy stacks.
   - Genesis Motes: Genesis Fields portal farm (42.2, 74.2) as the primary spot.
 - Reagent rows for the Crown, Ragepearl, Key and Ingot gained map pins.
+- Raid-boss reagents got a **Boss** button that opens the Adventure Guide on the right encounter: Lihuvim for the Tools, Artificer Xy'mox for the Mawforged Bridle.
 - Corrected the Cypher Research Console pin: it now points at Firim's spot in Exile's Hollow (34.1, 48.3) instead of a nearby cave landmark.
 
 - The unlock chain now shows **all four Cypher Console researches** as separate steps: Metrial (5 Cyphers, instant, completes with the campaign quest), Aealic (45 Cyphers, 18h), Dealic (3d 18h, also opens Pocopoc's pet-forge quest -- not needed for mounts), Sopranian (220 Cyphers, 5d 18h).
