@@ -12,6 +12,7 @@
   - Genesis Motes: Genesis Fields portal farm (42.2, 74.2) as the primary spot.
 - Reagent rows for the Crown, Ragepearl, Key and Ingot gained map pins.
 - Raid-boss reagents got a **Boss** button that opens the Adventure Guide on the right encounter: Lihuvim for the Tools, Artificer Xy'mox for the Mawforged Bridle.
+- **Drop gates are now spelled out.** Genesis Motes and lattices only drop after Pocopoc's pet-forge quest (needs Dealic research) -- it is now a tracked step in the unlock chain, and the "not required for mounts" wording is gone since skipping it means no reagents at all. Mount schematics and rare mount reagents only drop after A New Architect, stated on that step. A new tip summarizes both gates for anyone farming an empty spot.
 - Corrected the Cypher Research Console pin: it now points at Firim's spot in Exile's Hollow (34.1, 48.3) instead of a nearby cave landmark.
 
 - The unlock chain now shows **all four Cypher Console researches** as separate steps: Metrial (5 Cyphers, instant, completes with the campaign quest), Aealic (45 Cyphers, 18h), Dealic (3d 18h, also opens Pocopoc's pet-forge quest -- not needed for mounts), Sopranian (220 Cyphers, 5d 18h).
