@@ -2,6 +2,8 @@
 
 ## 1.5.0
 
+- **Flat visual overhaul.** The default dialog chrome is gone: dark flat panels with 1px borders, flat buttons with a gold selected state, a thin scrollbar without arrow buttons, an ✕ close button, and a gold accent bar on the selected mount. The craft popup got the same treatment. Same layout, same behavior -- just a modern skin.
+
 - **TomTom support**: when TomTom is installed, every Pin button sets a TomTom crazy-arrow waypoint (cross-zone, queueable) instead of the native map pin. Without TomTom nothing changes.
 - **Much richer reagent guidance**, sourced from community farming guides:
   - Protoform Sentience Crown: three farm spots with coordinates, plus the "Dangerous State" daily trick (20+ fast-respawning Dominated Jiro in one spot).

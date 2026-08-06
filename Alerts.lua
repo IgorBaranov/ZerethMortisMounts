@@ -33,14 +33,11 @@ end
 local function BuildToast()
 	local f = CreateFrame("Frame", "ZerethMortisMountsToast", UIParent, "BackdropTemplate")
 	f:SetSize(320, 50)
-	f:SetBackdrop({
-		bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background-Dark",
-		edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-		tile = true, tileSize = 32, edgeSize = 14,
-		insets = { left = 3, right = 3, top = 3, bottom = 3 },
-	})
-	f:SetBackdropColor(0.04, 0.06, 0.10, 0.94)
-	f:SetBackdropBorderColor(0.95, 0.78, 0.30, 1)
+	-- flat skin, matching the main window: 1px gold border on a dark panel
+	f:SetBackdrop({ bgFile = "Interface\\Buttons\\WHITE8x8",
+		edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1 })
+	f:SetBackdropColor(0.070, 0.075, 0.095, 0.97)
+	f:SetBackdropBorderColor(0.98, 0.80, 0.28, 0.9)
 	f:SetFrameStrata("DIALOG")
 	f:SetClampedToScreen(true)
 	f:SetMovable(true)
@@ -75,9 +72,15 @@ local function BuildToast()
 	f.body:SetJustifyH("LEFT")
 	f.body:SetWordWrap(false)
 
-	f.close = CreateFrame("Button", nil, f, "UIPanelCloseButton")
+	f.close = CreateFrame("Button", nil, f)
 	f.close:SetSize(22, 22)
-	f.close:SetPoint("TOPRIGHT", -1, -1)
+	f.close:SetPoint("TOPRIGHT", -2, -2)
+	f.close.x = f.close:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+	f.close.x:SetPoint("CENTER")
+	f.close.x:SetText("✕")
+	f.close.x:SetTextColor(0.60, 0.62, 0.68)
+	f.close:SetScript("OnEnter", function(self) self.x:SetTextColor(0.95, 0.45, 0.40) end)
+	f.close:SetScript("OnLeave", function(self) self.x:SetTextColor(0.60, 0.62, 0.68) end)
 	f.close:SetScript("OnClick", function() f:Hide() end)
 
 	-- clicking the toast opens the addon on the relevant mount

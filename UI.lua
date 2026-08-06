@@ -1,4 +1,6 @@
 -- Zereth Mortis Mounts :: window + minimap button
+-- Flat skin: dark panels, 1px borders, gold accent -- the ElvUI-adjacent look,
+-- built from scratch (WHITE8x8 backdrops + custom flat buttons).
 
 local ADDON, ns = ...
 
@@ -8,7 +10,16 @@ local ROW_HEIGHT = 26
 
 local GREEN = { 0.35, 0.95, 0.45 }
 local RED = { 1.00, 0.40, 0.40 }
-local GOLD = { 1.00, 0.82, 0.00 }
+local GOLD = { 0.98, 0.80, 0.28 }
+
+-- flat-skin palette
+local WHITE8 = "Interface\\Buttons\\WHITE8x8"
+local C_BG      = { 0.070, 0.075, 0.095, 0.97 } -- window
+local C_PANEL   = { 0.055, 0.060, 0.078, 1 }    -- inset boxes
+local C_BTN     = { 0.120, 0.125, 0.155, 1 }    -- button fill
+local C_BORDER  = { 0.22, 0.24, 0.30, 1 }
+local C_TEXT    = { 0.92, 0.93, 0.96 }
+local C_MUTED   = { 0.60, 0.62, 0.68 }
 
 local ICON_READY = "Interface\\RaidFrame\\ReadyCheck-Ready"
 local ICON_NOT = "Interface\\RaidFrame\\ReadyCheck-NotReady"
@@ -30,20 +41,89 @@ end
 
 local function MakeBackdropFrame(parent, name)
 	local f = CreateFrame("Frame", name, parent, "BackdropTemplate")
-	f:SetBackdrop({
-		bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background-Dark",
-		edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-		tile = true, tileSize = 32, edgeSize = 16,
-		insets = { left = 4, right = 4, top = 4, bottom = 4 },
-	})
-	f:SetBackdropColor(0.05, 0.06, 0.09, 0.95)
-	f:SetBackdropBorderColor(0.35, 0.45, 0.6, 1)
+	f:SetBackdrop({ bgFile = WHITE8, edgeFile = WHITE8, edgeSize = 1 })
+	f:SetBackdropColor(unpack(name and C_BG or C_PANEL))
+	f:SetBackdropBorderColor(unpack(C_BORDER))
 	return f
 end
 
+-- Flat replacement for UIPanelButtonTemplate. Exposes the same surface the
+-- rest of this file already uses: SetText, SetEnabled, LockHighlight /
+-- UnlockHighlight (as a selected state), plus a native highlight on hover so
+-- tooltip OnEnter scripts do not fight the skin.
+local function FlatButton(parent, width, height)
+	local b = CreateFrame("Button", nil, parent, "BackdropTemplate")
+	b:SetSize(width or 52, height or 20)
+	b:SetBackdrop({ bgFile = WHITE8, edgeFile = WHITE8, edgeSize = 1 })
+
+	b.label = b:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+	b.label:SetPoint("CENTER", 0, 0)
+
+	local hl = b:CreateTexture(nil, "HIGHLIGHT")
+	hl:SetTexture(WHITE8)
+	hl:SetVertexColor(1, 1, 1, 0.07)
+	hl:SetAllPoints()
+
+	function b:Paint()
+		if self.selected then
+			self:SetBackdropColor(GOLD[1] * 0.24, GOLD[2] * 0.24, GOLD[3] * 0.24, 1)
+			self:SetBackdropBorderColor(GOLD[1], GOLD[2], GOLD[3], 0.9)
+			self.label:SetTextColor(unpack(GOLD))
+		else
+			self:SetBackdropColor(unpack(C_BTN))
+			self:SetBackdropBorderColor(unpack(C_BORDER))
+			self.label:SetTextColor(unpack(self:IsEnabled() and C_TEXT or C_MUTED))
+		end
+		self.label:SetAlpha(self:IsEnabled() and 1 or 0.45)
+	end
+
+	function b:SetText(text) self.label:SetText(text) self:Paint() end
+	function b:GetText() return self.label:GetText() end
+	function b:LockHighlight() self.selected = true self:Paint() end
+	function b:UnlockHighlight() self.selected = nil self:Paint() end
+	b:SetScript("OnEnable", b.Paint)
+	b:SetScript("OnDisable", b.Paint)
+
+	b:Paint()
+	return b
+end
+
+-- Flattens a UIPanelScrollFrameTemplate scrollbar: no arrow art, thin thumb.
+local function SkinScrollBar(scroll)
+	local name = scroll:GetName()
+	local bar = name and _G[name .. "ScrollBar"]
+	if not bar then return end
+	for _, suffix in ipairs({ "ScrollUpButton", "ScrollDownButton" }) do
+		local btn = _G[name .. "ScrollBar" .. suffix]
+		if btn then
+			btn:SetAlpha(0)
+			btn:SetSize(10, 1)
+		end
+	end
+	local thumb = _G[name .. "ScrollBarThumbTexture"]
+	if thumb then
+		thumb:SetTexture(WHITE8)
+		thumb:SetVertexColor(1, 1, 1, 0.16)
+		thumb:SetSize(4, 40)
+	end
+end
+
+-- Flat ✕ close button.
+local function FlatClose(parent, onClick)
+	local close = CreateFrame("Button", nil, parent)
+	close:SetSize(26, 26)
+	close.x = close:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	close.x:SetPoint("CENTER")
+	close.x:SetText("✕")
+	close.x:SetTextColor(unpack(C_MUTED))
+	close:SetScript("OnEnter", function(self) self.x:SetTextColor(0.95, 0.45, 0.40) end)
+	close:SetScript("OnLeave", function(self) self.x:SetTextColor(unpack(C_MUTED)) end)
+	close:SetScript("OnClick", onClick)
+	return close
+end
+
 local function MakePinButton(parent)
-	local b = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
-	b:SetSize(52, 20)
+	local b = FlatButton(parent, 52, 20)
 	b:SetText("Pin")
 	b:SetScript("OnEnter", function(self)
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
@@ -87,12 +167,19 @@ local function CreateRow(parent, i)
 
 	row.bg = row:CreateTexture(nil, "BACKGROUND")
 	row.bg:SetAllPoints()
-	row.bg:SetColorTexture(1, 1, 1, 0.06)
+	row.bg:SetColorTexture(GOLD[1], GOLD[2], GOLD[3], 0.10)
 	row.bg:Hide()
+
+	-- gold accent bar on the selected row, ElvUI-style
+	row.accent = row:CreateTexture(nil, "BACKGROUND", nil, 1)
+	row.accent:SetColorTexture(unpack(GOLD))
+	row.accent:SetSize(2, ROW_HEIGHT - 6)
+	row.accent:SetPoint("LEFT", 0, 0)
+	row.accent:Hide()
 
 	row.highlight = row:CreateTexture(nil, "HIGHLIGHT")
 	row.highlight:SetAllPoints()
-	row.highlight:SetColorTexture(0.4, 0.6, 1, 0.15)
+	row.highlight:SetColorTexture(1, 1, 1, 0.05)
 
 	row.status = row:CreateTexture(nil, "ARTWORK")
 	row.status:SetSize(16, 16)
@@ -146,8 +233,7 @@ local function CreateReagentBlock(parent)
 	b.pin:SetPoint("TOPRIGHT", 0, 0)
 
 	-- Adventure Guide shortcut, shown only for raid-boss reagents
-	b.boss = CreateFrame("Button", nil, b, "UIPanelButtonTemplate")
-	b.boss:SetSize(52, 20)
+	b.boss = FlatButton(b, 52, 20)
 	b.boss:SetText("Boss")
 	b.boss:SetPoint("TOPRIGHT", b.pin, "TOPLEFT", -4, 0)
 	b.boss:SetScript("OnEnter", function(self)
@@ -206,8 +292,8 @@ function ns.BuildUI()
 	title:SetText("Zereth Mortis Mounts")
 	title:SetTextColor(unpack(GOLD))
 
-	local close = CreateFrame("Button", nil, f, "UIPanelCloseButton")
-	close:SetPoint("TOPRIGHT", -4, -4)
+	local close = FlatClose(f, function() f:Hide() end)
+	close:SetPoint("TOPRIGHT", -6, -6)
 
 	f.summary = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
 	f.summary:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 1, -6)
@@ -224,8 +310,7 @@ function ns.BuildUI()
 	local prevTab
 	for i = #tabSpecs, 1, -1 do -- lay out right-to-left so the row hugs the corner
 		local spec = tabSpecs[i]
-		local b = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
-		b:SetSize(spec.key == "tips" and 60 or 104, 22)
+		local b = FlatButton(f, spec.key == "tips" and 60 or 104, 22)
 		b:SetText(spec.text)
 		if prevTab then
 			b:SetPoint("RIGHT", prevTab, "LEFT", -4, 0)
@@ -250,8 +335,7 @@ function ns.BuildUI()
 	f.filterButtons = {}
 	local prev
 	for _, spec in ipairs(filters) do
-		local b = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
-		b:SetSize(96, 20)
+		local b = FlatButton(f, 96, 20)
 		b:SetText(spec.text)
 		if prev then
 			b:SetPoint("LEFT", prev, "RIGHT", 4, 0)
@@ -269,8 +353,7 @@ function ns.BuildUI()
 	end
 
 	-- always-visible forge pin: the one place everything is crafted
-	local forge = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
-	forge:SetSize(232, 22)
+	local forge = FlatButton(f, 232, 22)
 	forge:SetPoint("TOPRIGHT", f.tabButtons[1], "BOTTOMRIGHT", 0, -6)
 	forge:SetText(("Pin the forge  (%.1f, %.1f)"):format(ns.FORGE.x, ns.FORGE.y))
 	forge:SetScript("OnClick", function()
@@ -296,6 +379,7 @@ function ns.BuildUI()
 	listBox:SetBackdropColor(0, 0, 0, 0.35)
 
 	local scroll = CreateFrame("ScrollFrame", "ZerethMortisMountsList", listBox, "UIPanelScrollFrameTemplate")
+	SkinScrollBar(scroll)
 	scroll:SetPoint("TOPLEFT", 8, -8)
 	scroll:SetPoint("BOTTOMRIGHT", -28, 8)
 
@@ -322,6 +406,7 @@ function ns.BuildUI()
 	detailBox:SetBackdropColor(0, 0, 0, 0.35)
 
 	local dScroll = CreateFrame("ScrollFrame", "ZerethMortisMountsDetail", detailBox, "UIPanelScrollFrameTemplate")
+	SkinScrollBar(dScroll)
 	dScroll:SetPoint("TOPLEFT", 10, -10)
 	dScroll:SetPoint("BOTTOMRIGHT", -28, 10)
 
@@ -405,6 +490,7 @@ function ns.BuildSchematicsPanel(f)
 	f.schematicsBox = box
 
 	local scroll = CreateFrame("ScrollFrame", "ZerethMortisMountsSchematics", box, "UIPanelScrollFrameTemplate")
+	SkinScrollBar(scroll)
 	scroll:SetPoint("TOPLEFT", 10, -10)
 	scroll:SetPoint("BOTTOMRIGHT", -28, 10)
 
@@ -531,6 +617,7 @@ function ns.BuildTipsPanel(f)
 	f.tipsBox = box
 
 	local scroll = CreateFrame("ScrollFrame", "ZerethMortisMountsTips", box, "UIPanelScrollFrameTemplate")
+	SkinScrollBar(scroll)
 	scroll:SetPoint("TOPLEFT", 10, -10)
 	scroll:SetPoint("BOTTOMRIGHT", -28, 10)
 
@@ -618,6 +705,7 @@ function ns.BuildUnlockPanel(f)
 	f.unlockBox = box
 
 	local scroll = CreateFrame("ScrollFrame", "ZerethMortisMountsUnlock", box, "UIPanelScrollFrameTemplate")
+	SkinScrollBar(scroll)
 	scroll:SetPoint("TOPLEFT", 10, -10)
 	scroll:SetPoint("BOTTOMRIGHT", -28, 10)
 
@@ -899,6 +987,7 @@ function ns.UpdateWindow()
 				row.progress:SetTextColor(unpack(metCount == 3 and GREEN or RED))
 			end
 			row.bg:SetShown(mount == selectedMount)
+			row.accent:SetShown(mount == selectedMount)
 			row:Show()
 		else
 			row:Hide()
