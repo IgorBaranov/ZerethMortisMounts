@@ -548,7 +548,8 @@ function ns.BuildSchematicsPanel(f)
 
 			row.how = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
 			row.how:SetPoint("TOPLEFT", row.name, "TOPRIGHT", 8, 0)
-			row.how:SetPoint("RIGHT", row, "RIGHT", -140, 0)
+			-- keep clear of the state text ("recipe missing" is ~95px wide)
+			row.how:SetPoint("RIGHT", row, "RIGHT", -170, 0)
 			row.how:SetJustifyH("LEFT")
 			row.how:SetTextColor(0.72, 0.72, 0.78)
 			row.how:SetText(mount.schematic.how)
@@ -894,7 +895,9 @@ local function UpdateDetail(mount)
 	d.forgeText:ClearAllPoints()
 	d.forgeText:SetPoint("TOPLEFT", d.forgeHeader, "BOTTOMLEFT", 0, -4)
 	d.forgePin:ClearAllPoints()
-	d.forgePin:SetPoint("TOPRIGHT", d.forgeHeader, "TOPRIGHT", 0, 2)
+	-- pane's right edge, vertically in line with the header -- anchoring to the
+	-- header's own TOPRIGHT put the button on top of its text
+	d.forgePin:SetPoint("TOPLEFT", d.forgeHeader, "TOPLEFT", d.width - 52, 2)
 
 	-- total content height so the scrollbar behaves
 	local total = 40 + 12 + 16 + d.schematicText:GetStringHeight() + 14 + 16 + 6

@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.5.2
+
+- Fixed the "Where to craft" Pin button sitting on top of the header text in the mount detail pane.
+- Fixed long source descriptions on the Schematics tab running into the "recipe missing" status.
+
 ## 1.5.1
 
 - Fixed the close buttons rendering blank: the Unicode cross glyph is missing from WoW's default fonts, replaced with a plain X. Bullet separators in headers swapped for a middle dot for the same reason (guaranteed on all client languages).
