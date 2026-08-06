@@ -2,6 +2,9 @@
 
 ## 1.5.0
 
+- **TomTom support**: when TomTom is installed, every Pin button sets a TomTom crazy-arrow waypoint (cross-zone, queueable) instead of the native map pin. Without TomTom nothing changes.
+- Corrected the Cypher Research Console pin: it now points at Firim's spot in Exile's Hollow (34.1, 48.3) instead of a nearby cave landmark.
+
 - The unlock chain now shows **all four Cypher Console researches** as separate steps: Metrial (5 Cyphers, instant, completes with the campaign quest), Aealic (45 Cyphers, 18h), Dealic (3d 18h, also opens Pocopoc's pet-forge quest -- not needed for mounts), Sopranian (220 Cyphers, 5d 18h).
 - **Research state is now read live from the game** via the Cypher Console talent tree (ID 474): researched, researching (with time remaining shown), or not started. Nodes are identified by research duration, so this works on any client language. When the tree API returns nothing, the old quest-log inference still applies.
 - `/zmm research` prints what the console tree reports -- use it to verify the detection on your character.

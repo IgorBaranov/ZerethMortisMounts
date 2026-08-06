@@ -10,7 +10,7 @@ One minimap button, one window. No dependencies, no libraries.
 - **All 24 mounts**, with a green check for the ones you have already learned and a red cross for the rest.
 - **Live reagent counts** for the mount you select: Genesis Motes, the lattice, and the rare reagent — `have / need`, green when satisfied. Counts include your bags, bank, reagent bank and warband bank.
 - **Where to farm** every reagent, and **where to find the schematic** that unlocks the recipe.
-- **Click "Pin"** next to any line to drop a map waypoint in Zereth Mortis and start super-tracking it (the arrow on your minimap). Lines that are not out in the world — vendors, paragon caches, raid drops — have the Pin button greyed out and explain the source in text instead.
+- **Click "Pin"** next to any line to drop a map waypoint in Zereth Mortis and start super-tracking it (the arrow on your minimap). With **TomTom** installed, pins go through TomTom instead — crazy arrow, cross-zone routing, multiple queued points. Lines that are not out in the world — vendors, paragon caches, raid drops — have the Pin button greyed out and explain the source in text instead.
 - Header summary: how many you have learned, how many you can craft **right now** with what is in your bags, your current Genesis Motes, and how many motes the remaining mounts still cost.
 - Filters: **All** / **Not learned** / **Craftable now**.
 

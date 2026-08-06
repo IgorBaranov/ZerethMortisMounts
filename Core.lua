@@ -243,9 +243,30 @@ function ns.Print(msg)
 	print("|cff8ce0ffZereth Mortis Mounts|r: " .. msg)
 end
 
+-- TomTom integration: when TomTom is installed its crazy-arrow waypoint is
+-- strictly better than the native pin (works cross-zone, queues multiple
+-- points), so it takes priority. Falls back to the native user waypoint.
+local function pinWithTomTom(x, y, label)
+	if type(TomTom) ~= "table" or type(TomTom.AddWaypoint) ~= "function" then
+		return false
+	end
+	local ok = pcall(TomTom.AddWaypoint, TomTom, ns.MAP_ID, x / 100, y / 100, {
+		title = label or "Zereth Mortis Mounts",
+		from = "Zereth Mortis Mounts",
+		persistent = false,
+		minimap = true,
+		world = true,
+	})
+	return ok
+end
+
 function ns.Pin(x, y, label)
 	if not (x and y) then
 		ns.Print("no map location for " .. (label or "that") .. " -- see the description.")
+		return
+	end
+	if pinWithTomTom(x, y, label) then
+		ns.Print(("TomTom waypoint set -- %s (Zereth Mortis %.1f, %.1f)"):format(label or "Target", x, y))
 		return
 	end
 	if not (C_Map and C_Map.SetUserWaypoint and UiMapPoint) then
