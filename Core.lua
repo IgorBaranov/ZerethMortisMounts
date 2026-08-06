@@ -284,6 +284,34 @@ function ns.Pin(x, y, label)
 	ns.Print(("pin set -- %s (Zereth Mortis %.1f, %.1f)"):format(label or "Target", x, y))
 end
 
+-- Opens the Adventure Guide on a specific boss. The journal encounter ID is
+-- resolved at runtime from the encounter's position in the instance, so no
+-- locale-dependent names and no hardcoded encounter IDs are involved.
+function ns.OpenBossJournal(journal)
+	if not journal then return end
+	local load = (C_AddOns and C_AddOns.LoadAddOn) or LoadAddOn
+	pcall(load, "Blizzard_EncounterJournal")
+
+	local encounterID
+	if type(EJ_GetEncounterInfoByIndex) == "function" then
+		local ok, _, _, id = pcall(EJ_GetEncounterInfoByIndex, journal.encounterIndex, journal.instance)
+		if ok then encounterID = id end
+	end
+
+	if type(EncounterJournal_OpenJournal) == "function" then
+		-- 14 = Normal raid; the guide remembers the user's choice afterwards
+		local ok = pcall(EncounterJournal_OpenJournal, 14, journal.instance, encounterID)
+		if ok then return end
+	end
+	-- fallback: at least open the journal on the instance
+	if type(ToggleEncounterJournal) == "function" then
+		pcall(ToggleEncounterJournal)
+		if type(EJ_SelectInstance) == "function" then
+			pcall(EJ_SelectInstance, journal.instance)
+		end
+	end
+end
+
 --------------------------------------------------------------------------------
 -- boot
 --------------------------------------------------------------------------------

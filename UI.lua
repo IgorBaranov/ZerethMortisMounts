@@ -145,6 +145,24 @@ local function CreateReagentBlock(parent)
 	b.pin = MakePinButton(b)
 	b.pin:SetPoint("TOPRIGHT", 0, 0)
 
+	-- Adventure Guide shortcut, shown only for raid-boss reagents
+	b.boss = CreateFrame("Button", nil, b, "UIPanelButtonTemplate")
+	b.boss:SetSize(52, 20)
+	b.boss:SetText("Boss")
+	b.boss:SetPoint("TOPRIGHT", b.pin, "TOPLEFT", -4, 0)
+	b.boss:SetScript("OnEnter", function(self)
+		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+		GameTooltip:AddLine("Open the Adventure Guide", 1, 1, 1)
+		if self.journal and self.journal.boss then
+			GameTooltip:AddLine(self.journal.boss, 0.7, 0.8, 1)
+		end
+		GameTooltip:Show()
+	end)
+	b.boss:SetScript("OnLeave", GameTooltip_Hide)
+	b.boss:SetScript("OnClick", function(self)
+		ns.OpenBossJournal(self.journal)
+	end)
+
 	b.how = b:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
 	b.how:SetPoint("TOPLEFT", b.icon, "BOTTOMLEFT", 0, -3)
 	b.how:SetJustifyH("LEFT")
@@ -761,6 +779,11 @@ local function UpdateDetail(mount)
 		b.title:SetText(("%s%s"):format(req.need > 1 and (Comma(req.need) .. "x ") or "", ns.ReagentName(req.itemID)))
 		b.have:SetText(("%s / %s"):format(Comma(req.have), Comma(req.need)))
 		b.have:SetTextColor(unpack(req.met and GREEN or RED))
+		b.boss.journal = info.journal
+		b.boss:SetShown(info.journal ~= nil)
+		-- the count must not sit under the Boss button when it is visible
+		b.have:ClearAllPoints()
+		b.have:SetPoint("TOPRIGHT", info.journal and -114 or -58, -3)
 		b.how:SetWidth(d.width - 6)
 		b.how:SetText(info.how or "")
 		SetPin(b.pin, info.x, info.y, info.label)
