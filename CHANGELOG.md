@@ -3,6 +3,14 @@
 ## 1.5.0
 
 - **TomTom support**: when TomTom is installed, every Pin button sets a TomTom crazy-arrow waypoint (cross-zone, queueable) instead of the native map pin. Without TomTom nothing changes.
+- **Much richer reagent guidance**, sourced from community farming guides:
+  - Protoform Sentience Crown: three farm spots with coordinates, plus the "Dangerous State" daily trick (20+ fast-respawning Dominated Jiro in one spot).
+  - Eternal Ragepearl: Provis Strata sentries, Antecedent Isle and non-elite Lost Rubble circuits; pairs with Crown farming on the Antros island.
+  - Revelation Key: the Protector's cave (39.8, 26.4) and the full two-player sigil-matching barrier mechanic with all four sigil coordinates.
+  - Unalloyed Bronze Ingot: corrected -- the Requisites Originator is a console in the Repertory Alcove (4th option, chance per use), not a mob.
+  - Mawforged Bridle: corrected -- the High Value Cache is Normal+ only (never Raid Finder), weekly, and needs the Security Override Orb from Taskmaster Xy'pro at 3+ Synergy stacks.
+  - Genesis Motes: Genesis Fields portal farm (42.2, 74.2) as the primary spot.
+- Reagent rows for the Crown, Ragepearl, Key and Ingot gained map pins.
 - Corrected the Cypher Research Console pin: it now points at Firim's spot in Exile's Hollow (34.1, 48.3) instead of a nearby cave landmark.
 
 - The unlock chain now shows **all four Cypher Console researches** as separate steps: Metrial (5 Cyphers, instant, completes with the campaign quest), Aealic (45 Cyphers, 18h), Dealic (3d 18h, also opens Pocopoc's pet-forge quest -- not needed for mounts), Sopranian (220 Cyphers, 5d 18h).

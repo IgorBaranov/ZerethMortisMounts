@@ -15,8 +15,8 @@ ns.FORGE = { name = "Protoform Repository", x = 68.5, y = 30.1, note = "Arrangem
 ns.reagents = {
 	[188957] = {
 		label = "Genesis Mote",
-		how = "Drops from nearly every mob in Zereth Mortis. Fastest farm: devourers pouring out of the portals around Droning Precipice / Pilgrim's Grace, where the Automa NPCs help you kill them. Also rewarded by |cffffff00A New Architect|r and by Olea Cache from the weekly |cffffff00Patterns Within Patterns|r.",
-		x = 61.8, y = 58.9,
+		how = "Drops from nearly every mob in Zereth Mortis. Fastest farm: the devourer portals in Genesis Fields (42.2, 74.2) -- scavengers and gorgers pour out non-stop and the Automa NPCs tank them; Droning Precipice south of Pilgrim's Grace is the classic alternative. Also rewarded by |cffffff00A New Architect|r and by Olea Cache from the weekly |cffffff00Patterns Within Patterns|r.",
+		x = 42.2, y = 74.2,
 	},
 
 	-- Lattices (the body -- one per creature family)
@@ -33,13 +33,13 @@ ns.reagents = {
 	[189171] = { label = "Bauble of Pure Innovation", how = "One sits in Qie's bed inside Exile's Hollow. Also from Olea Cache. Unique (2).", x = 34.5, y = 49.7 },
 	[189174] = { label = "Lens of Focused Intention", how = "Sold by |cffffff00Vilo|r in Haven for 40g. Requires Revered with The Enlightened. Unique (2)." },
 	[189172] = { label = "Crystallized Echo of the First Song", how = "Looted from crystals with a music symbol floating above them, on the Sepulcher island in eastern Zereth Mortis. Also from Olea Cache. Unique (3).", x = 77.5, y = 59.0 },
-	[189173] = { label = "Eternal Ragepearl", how = "Drops from elite automa in Zereth Mortis and in Sepulcher of the First Ones. Very rarely from Olea Cache. Unique (2)." },
-	[189175] = { label = "Mawforged Bridle", how = "Looted from the High Value Cache in Sepulcher of the First Ones. Small chance from Olea Cache." },
-	[189176] = { label = "Protoform Sentience Crown", how = "Drops from elite mobs in Zereth Mortis and Sepulcher of the First Ones -- the dominated elites on Antecedent Isle are the usual farm. Small chance from Olea Cache." },
-	[189177] = { label = "Revelation Key", how = "Drops from the rare |cffffff00Protector of the First Ones|r in Zereth Mortis." },
-	[189178] = { label = "Tools of Incomprehensible Experimentation", how = "Drops from Lihuvim, Principal Architect in Sepulcher of the First Ones." },
-	[189179] = { label = "Unalloyed Bronze Ingot", how = "Drops from |cffffff00Requisites Originator|r in the Repertory Alcove. Also from Olea Cache. Unique (2)." },
-	[189180] = { label = "Wind's Infinite Call", how = "Drops from Enhanced Avian on the Sepulcher island in eastern Zereth Mortis. Low chance from Olea Cache.", x = 77.0, y = 57.0 },
+	[189173] = { label = "Eternal Ragepearl", how = "Rare drop from dominated/elite automa. Best circuits: |cffffff00Discordant Sentries|r in Provis Strata, Antecedent Isle (47.8, 10.4), around the Arrangement Index (65.6, 25.6). Prefer no elites? |cffffff00Lost Rubble|r in the Fissured Breach north of the Forge of Afterlives -- tiny health bars, tight pack, fast respawn. Do laps on the Antros island and it drops alongside Sentience Crowns. Unique (2).", x = 47.8, y = 10.4 },
+	[189175] = { label = "Mawforged Bridle", how = "From the |cffffff00High Value Cache|r in Sepulcher of the First Ones, just before Artificer Xy'mox's room. |cffff8888Normal/Heroic/Mythic only -- it does NOT spawn on Raid Finder|r, and it is once per weekly lockout. To open it: kill |cffffff00Taskmaster Xy'pro|r while he has 3+ stacks of Synergy (he gains them near other broker mobs); he drops a Security Override Orb, and whoever holds it opens the cache. Small chance from Olea Cache too." },
+	[189176] = { label = "Protoform Sentience Crown", how = "Rare drop from dominated automa and jiro. Farm spots: Antecedent Isle (48.6, 12.8), the Sepulcher island (77.4, 55.0), Endless Sands (62.9, 25.6). |cffffff00Best trick|r: while the daily \"Dangerous State\" is up, ~20-25 Dominated Jiro spawn points activate in one tight area with fast respawns -- far better than chasing elites. Alternative: Aged Maulers and Forgotten Caretakers inside the Blooming Foundry (Untamed Verdure). Small chance from Olea Cache.", x = 48.6, y = 12.8 },
+	[189177] = { label = "Revelation Key", how = "Drops from the rare |cffffff00Protector of the First Ones|r in a cave at (39.8, 26.4). The barrier needs |cffffff00two players|r: two mechanisms by the entrance each show a symbol -- find the matching Mysterious Sigils on the ground nearby (42.5 26.8 / 43.0 25.2 / 41.4 24.3 / 40.5 23.9) and stand on them simultaneously.", x = 39.8, y = 26.4 },
+	[189178] = { label = "Tools of Incomprehensible Experimentation", how = "Drops from |cffffff00Lihuvim, Principal Architect|r in Sepulcher of the First Ones. Raid Finder counts, so queue LFR and kill just that boss. Once per lockout per difficulty." },
+	[189179] = { label = "Unalloyed Bronze Ingot", how = "Not a mob: the |cffffff00Requisites Originator|r is a console inside the Repertory Alcove (enter via the Locus Shift by the Terrestrial Cache, ~49.6, 31.0). Pick its |cffffff004th option|r -- small chance of the ingot per use. Also from Olea Cache. Unique (2).", x = 49.6, y = 31.0 },
+	[189180] = { label = "Wind's Infinite Call", how = "Drops from |cffffff00Enhanced Avian|r -- the birds circling the Sepulcher raid entrance on the eastern island (~77, 57). Kill them during your Crown/Ragepearl laps there. Low chance from Olea Cache.", x = 77.0, y = 57.0 },
 }
 
 -- The unlock chain for MOUNT crafting.
@@ -123,8 +123,8 @@ ns.unlockChain = {
 -- Farming advice shown on the Tips tab.
 ns.tips = {
 	{ title = "Genesis Motes: devourers, not wildlife",
-	  body = "Motes are the real bottleneck -- 9,850 for all 24 mounts. Wildlife drops a trickle; the devourers that spawn from the invasion portals drop far more, come in dense packs and the Automa NPCs tank them for you. Park at a portal, AoE, repeat. Droning Precipice south of Pilgrim's Grace is the usual spot.",
-	  x = 61.8, y = 58.9, pinLabel = "Devourer farm, Droning Precipice" },
+	  body = "Motes are the real bottleneck -- 9,850 for all 24 mounts. Wildlife drops a trickle; the devourers that spawn from the invasion portals drop far more, come in dense packs and the Automa NPCs tank them for you. Park at the Genesis Fields portals (42.2, 74.2 -- endless scavengers and gorgers), AoE, repeat; Droning Precipice south of Pilgrim's Grace is the classic alternative.",
+	  x = 42.2, y = 74.2, pinLabel = "Devourer portals, Genesis Fields" },
 	{ title = "Do the weekly before anything else",
 	  body = "|cffffff00Patterns Within Patterns|r rewards an Olea Cache, which can contain ANY lattice and most rare reagents, plus ~140 Cyphers. It is the single highest-value 20 minutes in the zone and it is weekly, so never skip it. It also drops Tribute of the Enlightened Elders, the only source of Schematic: Bronze Helicid." },
 	{ title = "Lattices: farm the accelerated / matron versions",
@@ -134,12 +134,15 @@ ns.tips = {
 	{ title = "Sepulcher island reagents need no raid lockout",
 	  body = "Wind's Infinite Call (Enhanced Avian) and Crystallized Echo of the First Song (the humming crystals) are out in the open on the eastern Sepulcher island, not inside the raid. Only Tools of Incomprehensible Experimentation (Lihuvim) and Mawforged Bridle (High Value Cache) actually require going into the Sepulcher.",
 	  x = 77.2, y = 57.5, pinLabel = "Sepulcher island reagents" },
-	{ title = "Sepulcher can be soloed at current gear",
-	  body = "The two raid-only reagents come from LFR-difficulty content that is trivial at modern item levels. Run it on Raid Finder, or solo the earlier bosses. Lihuvim is the eighth boss, so LFR wing 3 is what you want for the Tools." },
+	{ title = "Raid reagents: LFR works for one, NOT the other",
+	  body = "Tools of Incomprehensible Experimentation: any difficulty including Raid Finder -- queue, kill Lihuvim, done. |cffff8888Mawforged Bridle is different|r: the High Value Cache spawns on Normal+ only and needs the Security Override Orb from Taskmaster Xy'pro killed at 3+ Synergy stacks. At current gear a Normal clear to Xy'mox's room is a quick solo/duo run -- but plan for once per weekly lockout, and you need it three times (three mounts use the Bridle)." },
 	{ title = "Start Sopranian research immediately",
 	  body = "The research timer (~5d 18h) runs whether you are online or not, and it is the longest single wait in the whole unlock. Queue it the moment Dealic Understanding finishes, then go farm motes while it ticks. Cyphers come fastest from the weekly (~140), Antros (~80) and dailies (~15 each)." },
 	{ title = "Treasure schematics are one-time and account-wide-ish",
 	  body = "Schematics that sit in the world (Vespoid Flutterer, Genesis Crawler, Scarlet Helicid and friends) are a single pickup each -- grab every one in a single sweep of the zone with the Pin buttons on the Mounts tab. Mob-drop schematics (Goldplate Bufonid, Mawdapted Raptora, Buzz) are the grindy ones; farm them while you are killing things for motes anyway." },
+	{ title = "Time your rare-reagent farm to the dailies",
+	  body = "Protoform Sentience Crown is needed for THREE mounts, and the single best window is the daily \"Dangerous State\": it activates ~20-25 fast-respawning Dominated Jiro spawns in one spot. For Eternal Ragepearl and Crowns together, run circuits on the Antros world-boss island -- the dominated elites there drop both, and the Enhanced Avians at the raid entrance (Wind's Infinite Call) are on the same lap.",
+	  x = 48.6, y = 12.8, pinLabel = "Dominated farm, Antecedent Isle" },
 	{ title = "Cheapest mounts first",
 	  body = "If you just want mount count, do the 300-mote recipes first: Reins of the Sundered Zerethsteed and Unsuccessful Prototype Fleetpod. Then the 350s. Buzz, Serenade, Ineffable Skitterer and Heartbond Lupine cost 500 each -- leave them for last." },
 }
