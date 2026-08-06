@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.5.0
+
+- The unlock chain now shows **all four Cypher Console researches** as separate steps: Metrial (5 Cyphers, instant, completes with the campaign quest), Aealic (45 Cyphers, 18h), Dealic (3d 18h, also opens Pocopoc's pet-forge quest -- not needed for mounts), Sopranian (220 Cyphers, 5d 18h).
+- **Research state is now read live from the game** via the Cypher Console talent tree (ID 474): researched, researching (with time remaining shown), or not started. Nodes are identified by research duration, so this works on any client language. When the tree API returns nothing, the old quest-log inference still applies.
+- `/zmm research` prints what the console tree reports -- use it to verify the detection on your character.
+
 ## 1.4.0
 
 - **Craft alert.** The moment you have everything for a mount -- recipe owned, every reagent in the bag, mount not yet collected -- a small popup appears. No sound, no screen-centre banner: it fades out on its own, is draggable, and clicking it jumps straight to that mount.

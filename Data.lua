@@ -55,6 +55,9 @@ ns.CHAIN_QUESTS = { 64829, 64745, 64759, 64761, 64762, 64763, 64766, 64767, 6542
 --   quest    -- tracked directly via the quest log
 --   infer    -- cannot be read from the API; done once any quest in inferQuests
 --               has been completed or picked up
+--   research -- a Cypher Console node, read live from garrison talent tree 474;
+--               `duration` (research seconds) identifies the node in any locale.
+--               Falls back to inferQuests when the tree API returns nothing.
 -- x/y put a Pin button on the row. NPC coordinates are approximate.
 ns.unlockChain = {
 	{ type = "infer", inferQuests = { 64230 }, title = "Zereth Mortis campaign, chapters 1-2",
@@ -62,8 +65,21 @@ ns.unlockChain = {
 	{ type = "quest", id = 64230, title = "Cyphers of the First Ones  (campaign, ch. 3)",
 	  note = "Ninth quest of \"Forming an Understanding\", from Firim in Exile's Hollow. Unlocks Pocopoc, the Cypher Research Console, world quests and the weekly Patterns Within Patterns.",
 	  x = 34.0, y = 48.1, pinLabel = "Firim, Exile's Hollow" },
-	{ type = "infer", inferQuests = ns.CHAIN_QUESTS, title = "Cypher Research: Sopranian Understanding",
-	  note = "At the Cypher Research Console in Exile's Hollow. Gate order is Metrial Understanding -> Aealic Understanding -> |cffffff00Dealic Understanding|r, and Sopranian Understanding then sits inside the Dealic tree. Community numbers put it at ~220 Cyphers and ~5d 18h of research. When it finishes, Elder Amir offers the next quest.\n|cff888888Note: the PET forge is a separate unlock (Dealic Understanding plus a quest from Pocopoc) and is NOT required for mounts.|r",
+	{ type = "research", duration = 0, inferQuests = { 64230 }, inferCompletedOnly = true,
+	  title = "Research: Metrial Understanding",
+	  note = "The first console node -- researching it is an objective of Cyphers of the First Ones, so it completes with that quest. 5 Cyphers, instant.",
+	  x = 34.5, y = 49.7, pinLabel = "Cypher Research Console, Exile's Hollow" },
+	{ type = "research", duration = 64800, inferQuests = ns.CHAIN_QUESTS,
+	  title = "Research: Aealic Understanding",
+	  note = "45 Cyphers, 18 hours of research. Queue it the moment Metrial completes -- the timer keeps running while you are offline.",
+	  x = 34.5, y = 49.7, pinLabel = "Cypher Research Console, Exile's Hollow" },
+	{ type = "research", duration = 324000, inferQuests = ns.CHAIN_QUESTS,
+	  title = "Research: Dealic Understanding",
+	  note = "3 days 18 hours of research. Completing it also lets |cffffff00Pocopoc|r offer the Protoform Synthesis quest -- that unlocks the PET forge. Nice bonus, but NOT required for mounts.",
+	  x = 34.5, y = 49.7, pinLabel = "Cypher Research Console, Exile's Hollow" },
+	{ type = "research", duration = 496800, inferQuests = ns.CHAIN_QUESTS,
+	  title = "Research: Sopranian Understanding",
+	  note = "220 Cyphers, 5 days 18 hours -- the longest wait in the whole unlock; it sits inside the Dealic tree. When it finishes, Elder Amir offers Finding Tahli.",
 	  x = 34.5, y = 49.7, pinLabel = "Cypher Research Console, Exile's Hollow" },
 	{ type = "quest", id = 64829, title = "Finding Tahli",
 	  note = "From Elder Amir at Pilgrim's Grace (an Ancient Translocator leads there). Find Tahli near the Arrangement Index.",

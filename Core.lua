@@ -119,6 +119,43 @@ function ns.SchematicGroups()
 	return out
 end
 
+local CYPHER_TREE_ID = 474
+
+-- Reads the Cypher Console (garrison talent tree 474) and returns a map of
+-- researchDuration -> { researched = bool, researching = bool, remaining = sec? }.
+-- Returns nil when the API has no data (old client, tree not loaded yet), in
+-- which case callers fall back to quest inference.
+function ns.CypherResearch()
+	if not (C_Garrison and C_Garrison.GetTalentTreeInfo) then return nil end
+	local ok, tree = pcall(C_Garrison.GetTalentTreeInfo, CYPHER_TREE_ID)
+	if not ok or type(tree) ~= "table" or type(tree.talents) ~= "table"
+		or #tree.talents == 0 then
+		return nil
+	end
+	local byDuration = {}
+	for _, talent in ipairs(tree.talents) do
+		local dur = tonumber(talent.researchDuration)
+		if dur then
+			local entry = byDuration[dur] or {}
+			entry.researched = entry.researched or (talent.researched == true)
+			if talent.isBeingResearched and not talent.researched then
+				entry.researching = true
+				-- remaining time when the client exposes it; both field layouts
+				-- have existed, so probe defensively
+				local remaining = tonumber(talent.timeRemaining)
+				if not remaining and talent.startTime and GetServerTime then
+					remaining = (tonumber(talent.startTime) or 0) + dur - GetServerTime()
+				end
+				if remaining and remaining > 0 then
+					entry.remaining = remaining
+				end
+			end
+			byDuration[dur] = entry
+		end
+	end
+	return byDuration
+end
+
 -- Unlock-chain step states: "done" | "active" | "next" | "locked"
 -- Returns an array parallel to ns.unlockChain, plus true when crafting is unlocked.
 function ns.UnlockStates()
@@ -126,9 +163,13 @@ function ns.UnlockStates()
 		or C_QuestLog.IsQuestFlaggedCompleted(65427)
 	local states = {}
 
-	local function touched(id)
-		return C_QuestLog.IsQuestFlaggedCompleted(id) or C_QuestLog.IsOnQuest(id)
+	local function touched(id, completedOnly)
+		if C_QuestLog.IsQuestFlaggedCompleted(id) then return true end
+		return not completedOnly and C_QuestLog.IsOnQuest(id)
 	end
+
+	local research = ns.CypherResearch()
+	local extras = {} -- i -> remaining seconds for researching steps
 
 	local prevDone = true
 	for i, step in ipairs(ns.unlockChain) do
@@ -136,13 +177,28 @@ function ns.UnlockStates()
 		if step.type == "note" then
 			-- informational row, never gates anything
 			state = "note"
-		elseif step.type == "infer" then
-			-- cannot be read from the API; certainly behind us once any of these exists
-			local done = unlocked
-			for _, id in ipairs(step.inferQuests) do
-				if touched(id) then done = true break end
+		elseif step.type == "infer" or step.type == "research" then
+			local entry = step.type == "research" and research
+				and step.duration and step.duration > 0
+				and research[step.duration] or nil
+			if entry then
+				-- live console data
+				if entry.researched or unlocked then
+					state = "done"
+				elseif entry.researching then
+					state = "active"
+					extras[i] = entry.remaining
+				else
+					state = prevDone and "next" or "locked"
+				end
+			else
+				-- quest inference fallback (and Metrial, which the quest tracks)
+				local done = unlocked
+				for _, id in ipairs(step.inferQuests) do
+					if touched(id, step.inferCompletedOnly) then done = true break end
+				end
+				state = done and "done" or (prevDone and "next" or "locked")
 			end
-			state = done and "done" or (prevDone and "next" or "locked")
 		elseif C_QuestLog.IsQuestFlaggedCompleted(step.id) or unlocked then
 			state = "done"
 		elseif C_QuestLog.IsOnQuest(step.id) then
@@ -157,7 +213,7 @@ function ns.UnlockStates()
 			prevDone = (state == "done")
 		end
 	end
-	return states, unlocked
+	return states, unlocked, extras
 end
 
 function ns.MountList()
@@ -218,6 +274,8 @@ loader:RegisterEvent("BAG_UPDATE_DELAYED")
 loader:RegisterEvent("NEW_MOUNT_ADDED")
 loader:RegisterEvent("QUEST_TURNED_IN")
 loader:RegisterEvent("UNIT_QUEST_LOG_CHANGED")
+loader:RegisterEvent("GARRISON_TALENT_UPDATE")
+loader:RegisterEvent("GARRISON_TALENT_COMPLETE")
 loader:SetScript("OnEvent", function(_, event, arg1)
 	if event == "ADDON_LOADED" and arg1 == ADDON then
 		ZerethMortisMountsDB = ZerethMortisMountsDB or {}
@@ -244,7 +302,23 @@ SLASH_ZERETHMORTISMOUNTS1 = "/zmm"
 SLASH_ZERETHMORTISMOUNTS2 = "/zerethmounts"
 SlashCmdList.ZERETHMORTISMOUNTS = function(msg)
 	msg = (msg or ""):lower():gsub("^%s+", ""):gsub("%s+$", "")
-	if msg == "alerts" then
+	if msg == "research" then
+		-- verification helper: dumps what the Cypher Console tree reports
+		local research = ns.CypherResearch()
+		if not research then
+			ns.Print("Cypher tree (474) returned no data -- the addon is using quest inference instead.")
+			return
+		end
+		local names = { [0] = "instant nodes", [64800] = "Aealic", [324000] = "Dealic", [496800] = "Sopranian" }
+		for _, dur in ipairs({ 64800, 324000, 496800 }) do
+			local e = research[dur]
+			local status = not e and "not found in tree"
+				or e.researched and "researched"
+				or e.researching and "researching now"
+				or "not started"
+			ns.Print(("%s (%ds): %s"):format(names[dur], dur, status))
+		end
+	elseif msg == "alerts" then
 		ZerethMortisMountsDB.alerts = not ZerethMortisMountsDB.alerts
 		ns.Print(ZerethMortisMountsDB.alerts
 			and "craft alerts |cff55ee66on|r."

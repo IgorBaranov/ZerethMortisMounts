@@ -654,10 +654,19 @@ function ns.BuildUnlockPanel(f)
 	end
 end
 
+local function FormatRemaining(seconds)
+	local d = math.floor(seconds / 86400)
+	local h = math.floor((seconds % 86400) / 3600)
+	if d > 0 then return ("%dd %dh"):format(d, h) end
+	local m = math.floor((seconds % 3600) / 60)
+	if h > 0 then return ("%dh %dm"):format(h, m) end
+	return ("%dm"):format(math.max(1, m))
+end
+
 function ns.UpdateUnlockPanel()
 	local f = ns.window
 	local box = f.unlockBox
-	local states, unlocked = ns.UnlockStates()
+	local states, unlocked, extras = ns.UnlockStates()
 
 	if unlocked then
 		box.header:SetText("|cff55ee66Mount crafting is UNLOCKED on this character.|r The Protoform Repository (68.5, 30.1) is open and every schematic below can drop for you.")
@@ -681,7 +690,11 @@ function ns.UpdateUnlockPanel()
 			row.icon:Hide()
 		end
 		row.title:SetTextColor(unpack(style.color))
-		row.state:SetText(STATE_TEXT[state])
+		if state == "active" and extras and extras[i] then
+			row.state:SetText(("|cffffd100researching -- %s left|r"):format(FormatRemaining(extras[i])))
+		else
+			row.state:SetText(STATE_TEXT[state])
+		end
 
 		row:ClearAllPoints()
 		row:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT", 0, i == 1 and -14 or -10)
