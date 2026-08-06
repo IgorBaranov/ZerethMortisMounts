@@ -83,6 +83,15 @@ local function FlatButton(parent, width, height)
 	function b:UnlockHighlight() self.selected = nil self:Paint() end
 	b:SetScript("OnEnable", b.Paint)
 	b:SetScript("OnDisable", b.Paint)
+	-- pressed feedback: nudge the label like a real button
+	b:SetScript("OnMouseDown", function(self)
+		if self:IsEnabled() then
+			self.label:SetPoint("CENTER", 1, -1)
+		end
+	end)
+	b:SetScript("OnMouseUp", function(self)
+		self.label:SetPoint("CENTER", 0, 0)
+	end)
 
 	b:Paint()
 	return b
@@ -108,13 +117,13 @@ local function SkinScrollBar(scroll)
 	end
 end
 
--- Flat ✕ close button.
+-- Flat X close button. A plain letter: the Unicode multiplication cross has no glyph in WoW's default fonts and renders blank.
 local function FlatClose(parent, onClick)
 	local close = CreateFrame("Button", nil, parent)
 	close:SetSize(26, 26)
 	close.x = close:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 	close.x:SetPoint("CENTER")
-	close.x:SetText("✕")
+	close.x:SetText("X")
 	close.x:SetTextColor(unpack(C_MUTED))
 	close:SetScript("OnEnter", function(self) self.x:SetTextColor(0.95, 0.45, 0.40) end)
 	close:SetScript("OnLeave", function(self) self.x:SetTextColor(unpack(C_MUTED)) end)
@@ -835,7 +844,7 @@ local function UpdateDetail(mount)
 	d.icon:SetTexture(ns.MountIcon(mount.spellID))
 	d.name:SetText(mount.name)
 	d.name:SetTextColor(unpack(collected and GREEN or GOLD))
-	d.sub:SetText(("%s  •  %s  •  %s  •  %s"):format(
+	d.sub:SetText(("%s  ·  %s  ·  %s  ·  %s"):format(
 		mount.family,
 		mount.flying and "Flying" or "Ground",
 		collected and "|cff55ee66Already learned|r" or "|cffff6666Not learned|r",
@@ -915,9 +924,9 @@ function ns.UpdateWindow()
 	if not mountsTab then
 		local collected, total, _, _, recipes = ns.Summary()
 		if tab == "tips" then
-			f.summary:SetText(("Learned |cffffd100%d|r of |cffffd100%d|r   •   ways to get there faster"):format(collected, total))
+			f.summary:SetText(("Learned |cffffd100%d|r of |cffffd100%d|r   ·   ways to get there faster"):format(collected, total))
 		elseif tab == "schematics" then
-			f.summary:SetText(("Recipes owned |cffffd100%d|r of |cffffd100%d|r   •   mounts learned |cffffd100%d|r"):format(recipes, total, collected))
+			f.summary:SetText(("Recipes owned |cffffd100%d|r of |cffffd100%d|r   ·   mounts learned |cffffd100%d|r"):format(recipes, total, collected))
 			ns.UpdateSchematicsPanel()
 		else
 			f.summary:SetText(("Learned |cffffd100%d|r of |cffffd100%d|r"):format(collected, total))
@@ -928,7 +937,7 @@ function ns.UpdateWindow()
 
 	local collected, total, ready, motesNeeded = ns.Summary()
 	local motes = ns.CountOf(ns.MOTE_ITEM)
-	f.summary:SetText(("Learned |cffffd100%d|r of |cffffd100%d|r   •   craftable right now: |cff55ee66%d|r   •   Genesis Motes: |cffffd100%s|r (|cffff8888%s|r still needed for the rest)")
+	f.summary:SetText(("Learned |cffffd100%d|r of |cffffd100%d|r   ·   craftable right now: |cff55ee66%d|r   ·   Genesis Motes: |cffffd100%s|r (|cffff8888%s|r still needed for the rest)")
 		:format(collected, total, ready, Comma(motes), Comma(motesNeeded)))
 
 	for _, b in ipairs(f.filterButtons) do
@@ -1067,10 +1076,10 @@ function ns.BuildMinimapButton()
 		GameTooltip:SetOwner(self, "ANCHOR_LEFT")
 		GameTooltip:AddLine("Zereth Mortis Mounts", 1, 0.82, 0)
 		local collected, total, ready = ns.Summary()
-		GameTooltip:AddLine(("Learned %d/%d  •  craftable now: %d"):format(collected, total, ready), 1, 1, 1)
+		GameTooltip:AddLine(("Learned %d/%d  ·  craftable now: %d"):format(collected, total, ready), 1, 1, 1)
 		GameTooltip:AddLine(("Genesis Motes: %s"):format(Comma(ns.CountOf(ns.MOTE_ITEM))), 0.8, 0.8, 0.9)
 		GameTooltip:AddLine(" ")
-		GameTooltip:AddLine("Click to open  •  drag to move", 0.6, 0.6, 0.6)
+		GameTooltip:AddLine("Click to open  ·  drag to move", 0.6, 0.6, 0.6)
 		GameTooltip:Show()
 	end)
 	b:SetScript("OnLeave", GameTooltip_Hide)

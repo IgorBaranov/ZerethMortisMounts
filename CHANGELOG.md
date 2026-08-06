@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.5.1
+
+- Fixed the close buttons rendering blank: the Unicode cross glyph is missing from WoW's default fonts, replaced with a plain X. Bullet separators in headers swapped for a middle dot for the same reason (guaranteed on all client languages).
+- Flat buttons got a pressed state (label nudge on click).
+
 ## 1.5.0
 
 - **Flat visual overhaul.** The default dialog chrome is gone: dark flat panels with 1px borders, flat buttons with a gold selected state, a thin scrollbar without arrow buttons, an ✕ close button, and a gold accent bar on the selected mount. The craft popup got the same treatment. Same layout, same behavior -- just a modern skin.
