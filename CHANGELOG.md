@@ -14,6 +14,7 @@
   - Genesis Motes: Genesis Fields portal farm (42.2, 74.2) as the primary spot.
 - Reagent rows for the Crown, Ragepearl, Key and Ingot gained map pins.
 - Raid-boss reagents got a **Boss** button that opens the Adventure Guide on the right encounter: Lihuvim for the Tools, Artificer Xy'mox for the Mawforged Bridle.
+- New tip: what to do after accidentally deleting a schematic or reagent -- what is permanently safe (handed-in recipes), what can simply be re-looted (the Reassimilation quest flag is the real gate), and when Blizzard's Item Restoration is the fast path (weekly/paragon cache schematics, deleted reagents).
 - **Drop gates are now spelled out.** Genesis Motes and lattices only drop after Pocopoc's pet-forge quest (needs Dealic research) -- it is now a tracked step in the unlock chain, and the "not required for mounts" wording is gone since skipping it means no reagents at all. Mount schematics and rare mount reagents only drop after A New Architect, stated on that step. A new tip summarizes both gates for anyone farming an empty spot.
 - Corrected the Cypher Research Console pin: it now points at Firim's spot in Exile's Hollow (34.1, 48.3) instead of a nearby cave landmark.
 

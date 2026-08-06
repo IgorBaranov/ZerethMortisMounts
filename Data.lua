@@ -148,6 +148,8 @@ ns.tips = {
 	{ title = "Time your rare-reagent farm to the dailies",
 	  body = "Protoform Sentience Crown is needed for THREE mounts, and the single best window is the daily \"Dangerous State\": it activates ~20-25 fast-respawning Dominated Jiro spawns in one spot. For Eternal Ragepearl and Crowns together, run circuits on the Antros world-boss island -- the dominated elites there drop both, and the Enhanced Avians at the raid entrance (Wind's Infinite Call) are on the same lap.",
 	  x = 48.6, y = 12.8, pinLabel = "Dominated farm, Antecedent Isle" },
+	{ title = "Deleted a schematic or reagent by mistake?",
+	  body = "First: a recipe |cffffff00cannot be lost once handed in|r -- completing Schematic Reassimilation flags it permanently, the forge remembers even if nothing is in your bags. If you deleted a schematic BEFORE handing it in, that quest flag was never set, so the source is still open to you: world-treasure schematics can be picked up again, mob-drop ones can drop again, and Vilo will re-sell the Lens. The painful ones are the weekly/paragon cache schematics (Bronze Helicid, Russet Bufonid) -- rather than waiting for the next cache, use Blizzard's |cffffff00Item Restoration|r self-service (support site, restores deleted items for ~30 days); it also brings back deleted rare reagents. Restored or re-looted, hand it in at the Servitor Interface and you are back on track." },
 	{ title = "Cheapest mounts first",
 	  body = "If you just want mount count, do the 300-mote recipes first: Reins of the Sundered Zerethsteed and Unsuccessful Prototype Fleetpod. Then the 350s. Buzz, Serenade, Ineffable Skitterer and Heartbond Lupine cost 500 each -- leave them for last." },
 }
