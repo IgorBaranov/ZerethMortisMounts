@@ -1,4 +1,4 @@
-## Interface: 120007
+## Interface: 120100
 ## Title: Zereth Mortis Mounts
 ## Notes: Tracks every Protoform Synthesis mount from Zereth Mortis: what you have learned, which reagents you still need, and where to farm them.
 ## Version: @project-version@
