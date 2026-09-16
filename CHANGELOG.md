@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.5.3
+
+- Updated for WoW 12.1.0 (interface 120100).
+
 ## 1.5.2
 
 - Fixed the "Where to craft" Pin button sitting on top of the header text in the mount detail pane.
